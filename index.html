@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Pakto Quiz</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+</head>
+
+
+<body>
+
+    <main class="quiz-container">
+
+        <h1>PAKTO QUIZ</h1>
+
+
+        <!-- WYBÓR CZASU -->
+
+        <section class="time-section">
+
+            <h3>Wybierz długość fragmentu:</h3>
+
+            <div class="time-buttons">
+
+                <button
+                    class="time-button"
+                    data-time="1"
+                >
+                    1 sekunda
+                </button>
+
+
+                <button
+                    class="time-button active"
+                    data-time="5"
+                >
+                    5 sekund
+                </button>
+
+
+                <button
+                    class="time-button"
+                    data-time="10"
+                >
+                    10 sekund
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- QUIZ -->
+
+        <section id="quiz">
+
+            <p id="songNumber">
+                Piosenka 1
+            </p>
+
+
+            <h2 id="question">
+                Jaki jest tytuł piosenki?
+            </h2>
+
+
+            <!-- ODTWARZACZ -->
+
+            <audio
+                id="audio"
+                preload="auto"
+            ></audio>
+
+
+            <button
+                id="playButton"
+                class="main-button"
+            >
+                ▶ ODTWÓRZ FRAGMENT
+            </button>
+
+
+
+            <!-- ODPOWIEDŹ -->
+
+            <input
+                type="text"
+                id="answer"
+                placeholder="Wpisz tytuł piosenki..."
+                autocomplete="off"
+                spellcheck="false"
+            >
+
+
+            <button
+                id="submitAnswer"
+                class="main-button"
+            >
+                SPRAWDŹ ODPOWIEDŹ
+            </button>
+
+
+            <!-- INFORMACJA O ODPOWIEDZI -->
+
+            <p id="result"></p>
+
+
+
+            <!-- NAWIGACJA -->
+
+            <div class="navigation">
+
+                <button id="previousButton">
+                    ◀ WRÓĆ
+                </button>
+
+
+                <button id="nextButton">
+                    KOLEJNA PIOSENKA ▶
+                </button>
+
+            </div>
+
+
+
+            <!-- WYNIK -->
+
+            <p id="score">
+                Poprawne odpowiedzi: 0
+            </p>
+
+        </section>
+
+    </main>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

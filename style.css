@@ -1,0 +1,303 @@
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+
+    margin: 0;
+
+    min-height: 100vh;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    background: #111;
+
+    color: white;
+
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+.quiz-container {
+
+    width: 90%;
+
+    max-width: 700px;
+
+    padding: 35px;
+
+    background: #1e1e1e;
+
+    border-radius: 15px;
+
+    text-align: center;
+
+    box-shadow:
+        0 0 30px rgba(0, 0, 0, 0.6);
+}
+
+
+/* TYTUŁ */
+
+h1 {
+
+    margin-top: 0;
+
+    margin-bottom: 30px;
+
+    font-size: 38px;
+}
+
+
+/* CZAS */
+
+.time-section {
+
+    margin-bottom: 30px;
+}
+
+
+.time-section h3 {
+
+    margin-bottom: 15px;
+
+    color: #ccc;
+}
+
+
+.time-buttons {
+
+    display: flex;
+
+    justify-content: center;
+
+    flex-wrap: wrap;
+}
+
+
+/* PRZYCISKI */
+
+button {
+
+    border: none;
+
+    border-radius: 8px;
+
+    padding: 12px 18px;
+
+    margin: 5px;
+
+    background: #444;
+
+    color: white;
+
+    font-size: 16px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+
+button:hover {
+
+    background: #666;
+
+    transform: scale(1.02);
+}
+
+
+button:disabled {
+
+    opacity: 0.35;
+
+    cursor: not-allowed;
+
+    transform: none;
+}
+
+
+/* WYBRANY CZAS */
+
+.time-button.active {
+
+    background: #087cff;
+}
+
+
+.time-button.active:hover {
+
+    background: #087cff;
+}
+
+
+/* NUMER */
+
+#songNumber {
+
+    color: #999;
+
+    font-size: 15px;
+}
+
+
+/* PYTANIE */
+
+#question {
+
+    margin: 20px 0 25px;
+
+    font-size: 25px;
+}
+
+
+/* ODTWARZANIE */
+
+#playButton {
+
+    width: 100%;
+
+    padding: 15px;
+
+    background: #333;
+
+    font-size: 18px;
+}
+
+
+#playButton:hover {
+
+    background: #555;
+}
+
+
+/* ODPOWIEDŹ */
+
+#answer {
+
+    width: 100%;
+
+    margin-top: 20px;
+
+    padding: 15px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    outline: none;
+
+    font-size: 18px;
+
+    text-align: center;
+}
+
+
+#answer:focus {
+
+    box-shadow:
+        0 0 0 2px #087cff;
+}
+
+
+/* SPRAWDŹ */
+
+#submitAnswer {
+
+    width: 100%;
+
+    margin-top: 10px;
+
+    padding: 15px;
+
+    background: #087cff;
+
+    font-size: 18px;
+}
+
+
+#submitAnswer:hover {
+
+    background: #0069d9;
+}
+
+
+/* REZULTAT */
+
+#result {
+
+    min-height: 30px;
+
+    margin: 20px 0;
+
+    font-size: 20px;
+}
+
+
+/* NAWIGACJA */
+
+.navigation {
+
+    display: flex;
+
+    width: 100%;
+
+    margin-top: 25px;
+}
+
+
+.navigation button {
+
+    flex: 1;
+
+    padding: 14px;
+}
+
+
+/* WYNIK */
+
+#score {
+
+    margin-top: 25px;
+
+    color: #ccc;
+
+    font-size: 18px;
+}
+
+
+/* TELEFON */
+
+@media (max-width: 600px) {
+
+    .quiz-container {
+
+        width: 95%;
+
+        padding: 20px;
+    }
+
+
+    h1 {
+
+        font-size: 30px;
+    }
+
+
+    #question {
+
+        font-size: 21px;
+    }
+
+
+    .navigation {
+
+        flex-direction: column;
+    }
+
+}
