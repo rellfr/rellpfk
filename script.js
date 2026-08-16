@@ -1,64 +1,62 @@
 // =====================================================
-// WSZYSTKIE PIOSENKI
+// PIOSENKI
 // =====================================================
 
 const songs = [
-
     {
         title: "Aż Strach Pomyśleć",
-        file: "muzyka/piosenka1.mp3"
+        file: "https://imagetourl.cloud/t3di974n.mp3"
     },
 
     {
         title: "Chwile Ulotne",
-        file: "muzyka/piosenka2.mp3"
+        file: "https://imagetourl.cloud/176t682b.mp3"
     },
 
     {
         title: "Ja to Ja",
-        file: "muzyka/piosenka3.mp3"
+        file: "https://imagetourl.cloud/rql850fr.mp3"
     },
 
     {
         title: "Jestem Bogiem",
-        file: "muzyka/piosenka4.mp3"
+        file: "https://imagetourl.cloud/niwdd05m.mp3"
     },
 
     {
         title: "Nowiny",
-        file: "muzyka/piosenka5.mp3"
+        file: "https://imagetourl.cloud/c6f8n0ai.mp3"
     },
 
     {
         title: "Priorytety",
-        file: "muzyka/piosenka6.mp3"
+        file: "https://imagetourl.cloud/wag1card.mp3"
     },
 
     {
         title: "Rób Co Chcesz",
-        file: "muzyka/piosenka7.mp3"
+        file: "https://imagetourl.cloud/eu5884u4.mp3"
     },
 
     {
         title: "Play + Rec",
-        file: "muzyka/piosenka8.mp3"
+        file: "https://imagetourl.cloud/0m7nxjof.mp3"
     },
 
     {
         title: "C.D. Kinematografii",
-        file: "muzyka/piosenka9.mp3"
+        file: "https://imagetourl.cloud/98qzhtf5.mp3"
     },
 
     {
         title: "Dla Pewnego Swego",
-        file: "muzyka/piosenka10.mp3"
+        file: "https://imagetourl.cloud/wb7q17k9.mp3"
     },
 
     {
         title: "Mechaniczna Pomarańcza",
-        file: "muzyka/piosenka11.mp3"
+        file: "https://imagetourl.cloud/kvemmtg1.mp3"
     }
-
 ];
 
 
@@ -66,27 +64,16 @@ const songs = [
 // ZMIENNE
 // =====================================================
 
-// Kolejność piosenek w aktualnej rundzie
 let playlist = [];
 
-
-// Aktualna pozycja w playlist
 let currentPosition = 0;
 
-
-// Wynik
 let score = 0;
 
-
-// Wybrany czas fragmentu
 let selectedTime = 5;
 
-
-// Timer zatrzymujący muzykę
 let stopTimer = null;
 
-
-// Czy odpowiedź została już sprawdzona
 let answered = false;
 
 
@@ -97,38 +84,29 @@ let answered = false;
 const audio =
     document.getElementById("audio");
 
-
 const playButton =
     document.getElementById("playButton");
-
 
 const answerInput =
     document.getElementById("answer");
 
-
 const submitButton =
     document.getElementById("submitAnswer");
-
 
 const nextButton =
     document.getElementById("nextButton");
 
-
 const previousButton =
     document.getElementById("previousButton");
-
 
 const result =
     document.getElementById("result");
 
-
 const scoreText =
     document.getElementById("score");
 
-
 const question =
     document.getElementById("question");
-
 
 const songNumber =
     document.getElementById("songNumber");
@@ -138,12 +116,9 @@ const songNumber =
 // LOSOWANIE
 // =====================================================
 
-// Tworzymy losową kolejność wszystkich piosenek.
-
 function shuffle(array) {
 
     const newArray = [...array];
-
 
     for (
         let i = newArray.length - 1;
@@ -152,20 +127,18 @@ function shuffle(array) {
     ) {
 
         const random =
-            Math.floor(Math.random() * (i + 1));
-
+            Math.floor(
+                Math.random() * (i + 1)
+            );
 
         [
             newArray[i],
             newArray[random]
-        ] =
-        [
+        ] = [
             newArray[random],
             newArray[i]
         ];
-
     }
-
 
     return newArray;
 }
@@ -175,68 +148,13 @@ function shuffle(array) {
 // NORMALIZOWANIE ODPOWIEDZI
 // =====================================================
 
-// Usuwa:
-//
-// wielkie litery
-// małe litery
-// spacje
-// kropki
-// przecinki
-// myślniki
-// znaki specjalne
-// polskie znaki
-//
-// Dzięki temu:
-//
-// C.D. Kinematografii
-//
-// oraz:
-//
-// c d kINEMATOGRAFII!!!
-//
-// zostaną uznane za to samo.
-
 function normalizeAnswer(text) {
 
     return text
-
         .toLowerCase()
-
         .normalize("NFD")
-
-        .replace(
-            /[\u0300-\u036f]/g,
-            ""
-        )
-
-        .replace(
-            /[^a-z0-9]/g,
-            ""
-        );
-}
-
-
-// =====================================================
-// NOWA RUNDA
-// =====================================================
-
-function createNewRound() {
-
-    // Losujemy wszystkie 11 piosenek
-    playlist = shuffle(songs);
-
-
-    // Zaczynamy od pierwszej
-    currentPosition = 0;
-
-
-    // Wynik zerujemy
-    score = 0;
-
-
-    // Ładujemy pierwszą
-    loadSong();
-
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]/g, "");
 }
 
 
@@ -252,6 +170,23 @@ function getCurrentSong() {
 
 
 // =====================================================
+// NOWA RUNDA
+// =====================================================
+
+function createNewRound() {
+
+    playlist = shuffle(songs);
+
+    currentPosition = 0;
+
+    score = 0;
+
+    loadSong();
+
+}
+
+
+// =====================================================
 // ŁADOWANIE PIOSENKI
 // =====================================================
 
@@ -259,15 +194,11 @@ function loadSong() {
 
     clearTimeout(stopTimer);
 
-
     audio.pause();
 
-
-    const song =
-        getCurrentSong();
+    const song = getCurrentSong();
 
 
-    // Numer aktualnej piosenki
     songNumber.textContent =
         `Piosenka ${currentPosition + 1} z ${playlist.length}`;
 
@@ -278,15 +209,12 @@ function loadSong() {
 
     answerInput.value = "";
 
-
     result.textContent = "";
-
 
     answered = false;
 
 
-    // WAŻNE:
-    // tutaj ustawiamy prawdziwy plik MP3
+    // Ustawienie adresu MP3
 
     audio.src = song.file;
 
@@ -297,10 +225,11 @@ function loadSong() {
         "▶ ODTWÓRZ FRAGMENT";
 
 
-    // WRÓĆ
-
     previousButton.disabled =
         currentPosition === 0;
+
+
+    nextButton.disabled = false;
 
 
     updateScore();
@@ -322,24 +251,23 @@ playButton.addEventListener(
         clearTimeout(stopTimer);
 
 
-        // Jeśli już gra
+        // Jeśli muzyka aktualnie gra
+
         if (!audio.paused) {
 
             audio.pause();
 
-
             playButton.textContent =
                 "▶ ODTWÓRZ FRAGMENT";
 
-
             return;
-
         }
 
 
         try {
 
-            // Zawsze zaczynamy od początku
+            // Zaczynamy od początku
+
             audio.currentTime = 0;
 
 
@@ -350,21 +278,19 @@ playButton.addEventListener(
                 "⏸ ODTWARZANIE...";
 
 
-            // Zatrzymanie po 1 / 5 / 10 sekundach
+            // Zatrzymanie po wybranym czasie
 
-            stopTimer =
-                setTimeout(
-                    function () {
+            stopTimer = setTimeout(
+                function () {
 
-                        audio.pause();
+                    audio.pause();
 
+                    playButton.textContent =
+                        "▶ ODTWÓRZ FRAGMENT";
 
-                        playButton.textContent =
-                            "▶ ODTWÓRZ FRAGMENT";
-
-                    },
-                    selectedTime * 1000
-                );
+                },
+                selectedTime * 1000
+            );
 
 
         } catch (error) {
@@ -385,7 +311,7 @@ playButton.addEventListener(
 
 
 // =====================================================
-// KONIEC PLIKU MP3
+// KONIEC MP3
 // =====================================================
 
 audio.addEventListener(
@@ -393,7 +319,6 @@ audio.addEventListener(
     function () {
 
         clearTimeout(stopTimer);
-
 
         playButton.textContent =
             "▶ ODTWÓRZ FRAGMENT";
@@ -453,6 +378,8 @@ document
 
 function checkAnswer() {
 
+    // Nie można odpowiadać drugi raz
+
     if (answered) {
 
         return;
@@ -465,6 +392,8 @@ function checkAnswer() {
             answerInput.value
         );
 
+
+    // Pusta odpowiedź
 
     if (userAnswer === "") {
 
@@ -482,18 +411,20 @@ function checkAnswer() {
         );
 
 
+    // POPRAWNA
+
     if (
-        userAnswer ===
-        correctAnswer
+        userAnswer === correctAnswer
     ) {
 
         score++;
-
 
         result.textContent =
             "✅ DOBRZE!";
 
     }
+
+    // BŁĘDNA
 
     else {
 
@@ -508,7 +439,6 @@ function checkAnswer() {
 
 
     clearTimeout(stopTimer);
-
 
     audio.pause();
 
@@ -533,7 +463,7 @@ submitButton.addEventListener(
 
 
 // =====================================================
-// ENTER
+// ENTER = SPRAWDŹ
 // =====================================================
 
 answerInput.addEventListener(
@@ -561,8 +491,7 @@ nextButton.addEventListener(
         clearTimeout(stopTimer);
 
 
-        // Jeśli jesteśmy na ostatniej
-        // kończymy rundę.
+        // Czy to ostatnia?
 
         if (
             currentPosition >=
@@ -576,10 +505,7 @@ nextButton.addEventListener(
         }
 
 
-        // Idziemy dalej
-
         currentPosition++;
-
 
         loadSong();
 
@@ -604,7 +530,6 @@ previousButton.addEventListener(
 
         currentPosition--;
 
-
         loadSong();
 
     }
@@ -624,13 +549,12 @@ function updateScore() {
 
 
 // =====================================================
-// KONIEC RUNDY
+// KONIEC QUIZU
 // =====================================================
 
 function finishQuiz() {
 
     clearTimeout(stopTimer);
-
 
     audio.pause();
 
@@ -644,17 +568,15 @@ function finishQuiz() {
         </h2>
 
         <p>
-            Przeszedłeś wszystkie
-            11 piosenek.
+            Przeszedłeś wszystkie 11 piosenek.
         </p>
 
         <h2>
-            Poprawne odpowiedzi:
-            ${score}
+            Poprawne odpowiedzi: ${score}
         </h2>
 
         <button
-            onclick="createNewRound()"
+            onclick="location.reload()"
         >
             🔀 NOWA LOSOWA RUNDA
         </button>
@@ -668,12 +590,8 @@ function finishQuiz() {
 // START
 // =====================================================
 
-// Losujemy piosenki przy uruchomieniu.
+// Pierwsza runda również jest losowa.
 
-playlist =
-    shuffle(songs);
-
-
-// Start od pierwszej losowej.
+playlist = shuffle(songs);
 
 loadSong();
