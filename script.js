@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // ================================
 
     let czas = 5;
-    let piosenka = null;
     let wynik = 0;
     let sprawdzona = false;
     let numer = 0;
@@ -14,79 +13,80 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // ================================
-    // 16 PIOSENEK
+    // PIOSENKI
+    // KOLEJNOŚĆ JEST WAŻNA
     // ================================
 
     const piosenki = [
-        [
-            "https://imagetourl.cloud/ljpik97i.mp3",
-            "Aż Strach Pomyśleć"
-        ],
-        [
-            "https://imagetourl.cloud/xdfujtna.mp3",
-            "Chwile Ulotne"
-        ],
-        [
-            "https://imagetourl.cloud/1qmsx1py.mp3",
-            "Ja to Ja"
-        ],
-        [
-            "https://imagetourl.cloud/7tdpxo8c.mp3",
-            "Jestem Bogiem"
-        ],
-        [
-            "https://imagetourl.cloud/amc0kizs.mp3",
-            "Nowiny"
-        ],
-        [
-            "https://imagetourl.cloud/zuxb7m4p.mp3",
-            "Priorytety"
-        ],
-        [
-            "https://imagetourl.cloud/kv8qoc1o.mp3",
-            "Rób Co Chcesz"
-        ],
-        [
-            "https://imagetourl.cloud/dckspyi1.mp3",
-            "Play + Rec"
-        ],
-        [
-            "https://imagetourl.cloud/uk4uz7ky.mp3",
-            "C.D. Kinematografii"
-        ],
-        [
-            "https://imagetourl.cloud/uh6pnkgr.mp3",
-            "Dla Pewnego Swego"
-        ],
-        [
-            "https://imagetourl.cloud/9kf76yxi.mp3",
-            "Mechaniczna Pomarańcza"
-        ],
-        [
-            "https://imagetourl.cloud/v69kvgtq.mp3",
-            "'Le Się Zmahauem"
-        ],
-        [
-            "https://imagetourl.cloud/iala857t.mp3",
-            "Tak Jak Telewizor (Kipper Remix)"
-        ],
-        [
-            "https://imagetourl.cloud/mq6jz5zy.mp3",
-            "Na Mocy Paktu"
-        ],
-        [
-            "https://imagetourl.cloud/kggwsu0n.mp3",
-            "Ja To Ja 2 (Dokładnie Tak!)"
-        ],
-        [
-            "https://imagetourl.cloud/pug5vxd1.mp3",
-            "Wielkie Dzięki"
-        ]
+        {
+            plik: "https://imagetourl.cloud/ljpik97i.mp3",
+            tytul: "Aż Strach Pomyśleć"
+        },
+        {
+            plik: "https://imagetourl.cloud/xdfujtna.mp3",
+            tytul: "Chwile Ulotne"
+        },
+        {
+            plik: "https://imagetourl.cloud/1qmsx1py.mp3",
+            tytul: "Ja to Ja"
+        },
+        {
+            plik: "https://imagetourl.cloud/7tdpxo8c.mp3",
+            tytul: "Jestem Bogiem"
+        },
+        {
+            plik: "https://imagetourl.cloud/amc0kizs.mp3",
+            tytul: "Nowiny"
+        },
+        {
+            plik: "https://imagetourl.cloud/zuxb7m4p.mp3",
+            tytul: "Priorytety"
+        },
+        {
+            plik: "https://imagetourl.cloud/kv8qoc1o.mp3",
+            tytul: "Rób Co Chcesz"
+        },
+        {
+            plik: "https://imagetourl.cloud/dckspyi1.mp3",
+            tytul: "Play + Rec"
+        },
+        {
+            plik: "https://imagetourl.cloud/uk4uz7ky.mp3",
+            tytul: "C.D. Kinematografii"
+        },
+        {
+            plik: "https://imagetourl.cloud/uh6pnkgr.mp3",
+            tytul: "Dla Pewnego Swego"
+        },
+        {
+            plik: "https://imagetourl.cloud/9kf76yxi.mp3",
+            tytul: "Mechaniczna Pomarańcza"
+        },
+        {
+            plik: "https://imagetourl.cloud/v69kvgtq.mp3",
+            tytul: "'Le Się Zmahauem"
+        },
+        {
+            plik: "https://imagetourl.cloud/iala857t.mp3",
+            tytul: "Tak Jak Telewizor (Kipper Remix)"
+        },
+        {
+            plik: "https://imagetourl.cloud/mq6jz5zy.mp3",
+            tytul: "Na Mocy Paktu"
+        },
+        {
+            plik: "https://imagetourl.cloud/kggwsu0n.mp3",
+            tytul: "Ja To Ja 2 (Dokładnie Tak!)"
+        },
+        {
+            plik: "https://imagetourl.cloud/pug5vxd1.mp3",
+            tytul: "Wielkie Dzięki"
+        }
     ];
 
 
     // ================================
-    // ELEMENTY HTML
+    // ELEMENTY
     // ================================
 
     const audio =
@@ -95,22 +95,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const czasButtons =
         document.querySelectorAll(".time-button");
 
-    const play =
+    const playButton =
         document.getElementById("playButton");
 
     const answer =
         document.getElementById("answer");
 
-    const submit =
+    const submitButton =
         document.getElementById("submitAnswer");
 
     const result =
         document.getElementById("result");
 
-    const next =
+    const nextButton =
         document.getElementById("nextButton");
 
-    const previous =
+    const previousButton =
         document.getElementById("previousButton");
 
     const songNumber =
@@ -119,15 +119,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const score =
         document.getElementById("score");
 
-    const quiz =
-        document.getElementById("quiz");
-
 
     // ================================
     // ZATRZYMANIE AUDIO
     // ================================
 
-    function stop() {
+    function zatrzymajAudio() {
 
         if (timer !== null) {
 
@@ -138,27 +135,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
         audio.pause();
 
-        try {
-            audio.currentTime = 0;
-        } catch (e) {
-            // nic
-        }
+        audio.currentTime = 0;
     }
 
 
     // ================================
-    // LOSOWANIE PIOSENKI
+    // USTAWIENIE PIOSENKI
     // ================================
 
-    function losujPiosenke() {
+    function ustawPiosenke() {
 
-        const index =
-            Math.floor(
-                Math.random() * piosenki.length
-            );
+        // numer zaczyna się od 1,
+        // tablica od 0
 
-        piosenka =
-            piosenki[index];
+        const indeks = numer - 1;
+
+        // dokładnie ta piosenka,
+        // która odpowiada numerowi
+
+        return piosenki[indeks];
     }
 
 
@@ -168,45 +163,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function nowaPiosenka() {
 
-        // JEŚLI BYŁA 16. PIOSENKA
         if (numer >= piosenki.length) {
 
             koniec = true;
 
-            stop();
+            zatrzymajAudio();
+
+            songNumber.textContent =
+                "KONIEC QUIZU";
 
             result.textContent =
                 "🏁 KONIEC QUIZU!";
 
-            next.style.display = "none";
-
-            play.style.display = "none";
-
-            submit.style.display = "none";
+            playButton.style.display = "none";
 
             answer.style.display = "none";
+
+            submitButton.style.display = "none";
+
+            nextButton.style.display = "none";
 
             return;
         }
 
 
-        stop();
+        zatrzymajAudio();
 
         numer++;
 
+        // WAŻNE:
+        // piosenka jest przypisana
+        // do numeru
 
-        // Losowanie
+        const piosenka =
+            ustawPiosenke();
 
-        losujPiosenke();
-
-
-        // Numer
 
         songNumber.textContent =
             `Piosenka ${numer} / ${piosenki.length}`;
 
-
-        // Reset
 
         answer.value = "";
 
@@ -215,18 +210,10 @@ document.addEventListener("DOMContentLoaded", () => {
         sprawdzona = false;
 
 
-        // Przywrócenie przycisków
+        // zapamiętujemy aktualną
 
-        play.style.display = "";
-
-        submit.style.display = "";
-
-        answer.style.display = "";
-
-        next.style.display = "";
-
-
-        koniec = false;
+        window.aktualnaPiosenka =
+            piosenka;
     }
 
 
@@ -240,9 +227,7 @@ document.addEventListener("DOMContentLoaded", () => {
             "click",
             () => {
 
-                if (koniec) {
-                    return;
-                }
+                if (koniec) return;
 
                 czas =
                     Number(
@@ -258,7 +243,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 button.classList.add("active");
 
 
-                stop();
+                zatrzymajAudio();
             }
         );
 
@@ -269,30 +254,35 @@ document.addEventListener("DOMContentLoaded", () => {
     // ODTWARZANIE
     // ================================
 
-    play.addEventListener(
+    playButton.addEventListener(
         "click",
         async () => {
 
-            if (koniec) {
-                return;
-            }
+            if (koniec) return;
 
 
-            if (!piosenka) {
-                nowaPiosenka();
-            }
+            const piosenka =
+                window.aktualnaPiosenka;
 
 
-            stop();
+            if (!piosenka) return;
 
+
+            zatrzymajAudio();
+
+
+            // Ustawiamy plik
 
             audio.src =
-                piosenka[0];
+                piosenka.plik;
 
             audio.load();
 
 
             try {
+
+                // Czekamy aż przeglądarka
+                // rozpozna długość MP3
 
                 await new Promise(
                     (resolve, reject) => {
@@ -300,7 +290,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (
                             audio.readyState >= 1
                         ) {
+
                             resolve();
+
                             return;
                         }
 
@@ -354,24 +346,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
 
-                let maxStart =
-                    audio.duration - czas;
+                // ==================================
+                // ZAWSZE POCZĄTEK PIOSENKI
+                // ==================================
+
+                audio.currentTime = 0;
 
 
-                if (
-                    !Number.isFinite(maxStart) ||
-                    maxStart < 0
-                ) {
-                    maxStart = 0;
-                }
-
-
-                audio.currentTime =
-                    Math.random() * maxStart;
-
+                // Odtwarzanie
 
                 await audio.play();
 
+
+                // Zatrzymanie po wybranym czasie
 
                 timer =
                     setTimeout(
@@ -379,9 +366,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                             audio.pause();
 
-                            try {
-                                audio.currentTime = 0;
-                            } catch (e) {}
+                            audio.currentTime = 0;
 
                             timer = null;
 
@@ -412,14 +397,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function sprawdzOdpowiedz() {
 
-        if (koniec) {
-            return;
-        }
-
-
-        if (!piosenka) {
-            return;
-        }
+        if (koniec) return;
 
 
         if (sprawdzona) {
@@ -431,13 +409,20 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        const wpisana =
+        const piosenka =
+            window.aktualnaPiosenka;
+
+
+        if (!piosenka) return;
+
+
+        const odpowiedz =
             answer.value
                 .trim()
                 .toLowerCase();
 
 
-        if (!wpisana) {
+        if (odpowiedz === "") {
 
             result.textContent =
                 "Wpisz tytuł piosenki!";
@@ -447,15 +432,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         const poprawna =
-            piosenka[1]
+            piosenka.tytul
                 .trim()
                 .toLowerCase();
 
 
-        if (wpisana === poprawna) {
+        if (odpowiedz === poprawna) {
 
             wynik++;
-
 
             result.textContent =
                 "🎉 DOBRZE! +1 punkt";
@@ -464,13 +448,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
             result.textContent =
                 "❌ ŹLE! Poprawna odpowiedź: " +
-                piosenka[1];
+                piosenka.tytul;
         }
 
 
         score.textContent =
-            "Poprawne odpowiedzi: " +
-            wynik;
+            "Poprawne odpowiedzi: " + wynik;
 
 
         sprawdzona = true;
@@ -478,10 +461,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // ================================
-    // SPRAWDŹ
+    // PRZYCISK SPRAWDŹ
     // ================================
 
-    submit.addEventListener(
+    submitButton.addEventListener(
         "click",
         sprawdzOdpowiedz
     );
@@ -495,10 +478,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "keydown",
         event => {
 
-            if (
-                event.key === "Enter" &&
-                !koniec
-            ) {
+            if (event.key === "Enter") {
 
                 event.preventDefault();
 
@@ -510,19 +490,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // ================================
-    // KOLEJNA
+    // KOLEJNA PIOSENKA
     // ================================
 
-    next.addEventListener(
+    nextButton.addEventListener(
         "click",
         () => {
 
-            if (koniec) {
-                return;
-            }
+            if (koniec) return;
 
             nowaPiosenka();
-
         }
     );
 
@@ -531,24 +508,17 @@ document.addEventListener("DOMContentLoaded", () => {
     // WRÓĆ
     // ================================
 
-    previous.addEventListener(
+    previousButton.addEventListener(
         "click",
         () => {
 
-            if (koniec) {
-                return;
-            }
-
-            stop();
-
-            piosenka = null;
-
-            answer.value = "";
+            zatrzymajAudio();
 
             result.textContent = "";
 
-            sprawdzona = false;
+            answer.value = "";
 
+            sprawdzona = false;
         }
     );
 
