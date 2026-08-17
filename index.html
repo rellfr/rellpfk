@@ -3,20 +3,12 @@
 
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Pakto Quiz</title>
 
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
+    <link rel="stylesheet" href="style.css">
 </head>
-
 
 <body>
 
@@ -24,35 +16,21 @@
 
         <h1>PAKTO QUIZ</h1>
 
-
-        <!-- WYBÓR CZASU -->
-
         <section class="time-section">
 
             <h3>Wybierz długość fragmentu:</h3>
 
             <div class="time-buttons">
 
-                <button
-                    class="time-button"
-                    data-time="1"
-                >
+                <button class="time-button" data-time="1">
                     1 sekunda
                 </button>
 
-
-                <button
-                    class="time-button active"
-                    data-time="5"
-                >
+                <button class="time-button active" data-time="5">
                     5 sekund
                 </button>
 
-
-                <button
-                    class="time-button"
-                    data-time="10"
-                >
+                <button class="time-button" data-time="10">
                     10 sekund
                 </button>
 
@@ -60,40 +38,21 @@
 
         </section>
 
-
-
-        <!-- QUIZ -->
-
         <section id="quiz">
 
             <p id="songNumber">
                 Piosenka 1
             </p>
 
-
             <h2 id="question">
                 Jaki jest tytuł piosenki?
             </h2>
 
+            <audio id="audio" preload="auto"></audio>
 
-            <!-- ODTWARZACZ -->
-
-            <audio
-                id="audio"
-                preload="auto"
-            ></audio>
-
-
-            <button
-                id="playButton"
-                class="main-button"
-            >
+            <button id="playButton" class="main-button">
                 ▶ ODTWÓRZ FRAGMENT
             </button>
-
-
-
-            <!-- ODPOWIEDŹ -->
 
             <input
                 type="text"
@@ -103,22 +62,11 @@
                 spellcheck="false"
             >
 
-
-            <button
-                id="submitAnswer"
-                class="main-button"
-            >
+            <button id="submitAnswer" class="main-button">
                 SPRAWDŹ ODPOWIEDŹ
             </button>
 
-
-            <!-- INFORMACJA O ODPOWIEDZI -->
-
             <p id="result"></p>
-
-
-
-            <!-- NAWIGACJA -->
 
             <div class="navigation">
 
@@ -126,16 +74,11 @@
                     ◀ WRÓĆ
                 </button>
 
-
                 <button id="nextButton">
                     KOLEJNA PIOSENKA ▶
                 </button>
 
             </div>
-
-
-
-            <!-- WYNIK -->
 
             <p id="score">
                 Poprawne odpowiedzi: 0
@@ -144,7 +87,6 @@
         </section>
 
     </main>
-
 
     <script src="script.js"></script>
 
