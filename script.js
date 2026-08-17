@@ -1,110 +1,128 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    // ================================
+    // ==========================================
     // USTAWIENIA
-    // ================================
+    // ==========================================
 
-    let czas = 5;
+    let wybranyCzas = 5;
+    let numerPiosenki = 0;
     let wynik = 0;
-    let sprawdzona = false;
-    let numer = 0;
-    let timer = null;
-    let koniec = false;
+    let odpowiedzSprawdzona = false;
+    let timerOdtwarzania = null;
+    let koniecQuizu = false;
 
 
-    // ================================
-    // PIOSENKI
-    // KOLEJNOŚĆ JEST WAŻNA
-    // ================================
+    // ==========================================
+    // 16 PIOSENEK
+    //
+    // KOLEJNOŚĆ JEST STAŁA
+    // ==========================================
 
     const piosenki = [
+
         {
             plik: "https://imagetourl.cloud/ljpik97i.mp3",
             tytul: "Aż Strach Pomyśleć"
         },
+
         {
             plik: "https://imagetourl.cloud/xdfujtna.mp3",
             tytul: "Chwile Ulotne"
         },
+
         {
             plik: "https://imagetourl.cloud/1qmsx1py.mp3",
             tytul: "Ja to Ja"
         },
+
         {
             plik: "https://imagetourl.cloud/7tdpxo8c.mp3",
             tytul: "Jestem Bogiem"
         },
+
         {
             plik: "https://imagetourl.cloud/amc0kizs.mp3",
             tytul: "Nowiny"
         },
+
         {
             plik: "https://imagetourl.cloud/zuxb7m4p.mp3",
             tytul: "Priorytety"
         },
+
         {
             plik: "https://imagetourl.cloud/kv8qoc1o.mp3",
             tytul: "Rób Co Chcesz"
         },
+
         {
             plik: "https://imagetourl.cloud/dckspyi1.mp3",
             tytul: "Play + Rec"
         },
+
         {
             plik: "https://imagetourl.cloud/uk4uz7ky.mp3",
             tytul: "C.D. Kinematografii"
         },
+
         {
             plik: "https://imagetourl.cloud/uh6pnkgr.mp3",
             tytul: "Dla Pewnego Swego"
         },
+
         {
             plik: "https://imagetourl.cloud/9kf76yxi.mp3",
             tytul: "Mechaniczna Pomarańcza"
         },
+
         {
             plik: "https://imagetourl.cloud/v69kvgtq.mp3",
             tytul: "'Le Się Zmahauem"
         },
+
         {
             plik: "https://imagetourl.cloud/iala857t.mp3",
             tytul: "Tak Jak Telewizor (Kipper Remix)"
         },
+
         {
             plik: "https://imagetourl.cloud/mq6jz5zy.mp3",
             tytul: "Na Mocy Paktu"
         },
+
         {
             plik: "https://imagetourl.cloud/kggwsu0n.mp3",
             tytul: "Ja To Ja 2 (Dokładnie Tak!)"
         },
+
         {
             plik: "https://imagetourl.cloud/pug5vxd1.mp3",
             tytul: "Wielkie Dzięki"
         }
+
     ];
 
 
-    // ================================
-    // ELEMENTY
-    // ================================
+    // ==========================================
+    // ELEMENTY HTML
+    // ==========================================
 
     const audio =
         document.getElementById("audio");
 
-    const czasButtons =
+    const przyciskiCzasu =
         document.querySelectorAll(".time-button");
 
     const playButton =
         document.getElementById("playButton");
 
-    const answer =
+    const poleOdpowiedzi =
         document.getElementById("answer");
 
     const submitButton =
         document.getElementById("submitAnswer");
 
-    const result =
+    const wynikTekst =
         document.getElementById("result");
 
     const nextButton =
@@ -120,68 +138,58 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("score");
 
 
-    // ================================
+    // ==========================================
     // ZATRZYMANIE AUDIO
-    // ================================
+    // ==========================================
 
     function zatrzymajAudio() {
 
-        if (timer !== null) {
+        if (timerOdtwarzania !== null) {
 
-            clearTimeout(timer);
+            clearTimeout(timerOdtwarzania);
 
-            timer = null;
+            timerOdtwarzania = null;
         }
 
         audio.pause();
 
-        audio.currentTime = 0;
+        try {
+
+            audio.currentTime = 0;
+
+        } catch (error) {
+
+            // Nic
+        }
     }
 
 
-    // ================================
-    // USTAWIENIE PIOSENKI
-    // ================================
+    // ==========================================
+    // AKTUALNA PIOSENKA
+    // ==========================================
 
-    function ustawPiosenke() {
+    function pobierzAktualnaPiosenke() {
 
-        // numer zaczyna się od 1,
-        // tablica od 0
+        if (numerPiosenki < 1) {
+            return null;
+        }
 
-        const indeks = numer - 1;
-
-        // dokładnie ta piosenka,
-        // która odpowiada numerowi
-
-        return piosenki[indeks];
+        return piosenki[numerPiosenki - 1];
     }
 
 
-    // ================================
-    // NOWA PIOSENKA
-    // ================================
+    // ==========================================
+    // NOWA RUNDA
+    // ==========================================
 
-    function nowaPiosenka() {
+    function rozpocznijNastepnaPiosenke() {
 
-        if (numer >= piosenki.length) {
+        // Jeśli jest już 16. piosenka,
+        // nie tworzymy 17.
 
-            koniec = true;
+        if (numerPiosenki >= piosenki.length) {
 
-            zatrzymajAudio();
-
-            songNumber.textContent =
-                "KONIEC QUIZU";
-
-            result.textContent =
-                "🏁 KONIEC QUIZU!";
-
-            playButton.style.display = "none";
-
-            answer.style.display = "none";
-
-            submitButton.style.display = "none";
-
-            nextButton.style.display = "none";
+            zakonczQuiz();
 
             return;
         }
@@ -189,58 +197,103 @@ document.addEventListener("DOMContentLoaded", () => {
 
         zatrzymajAudio();
 
-        numer++;
 
-        // WAŻNE:
-        // piosenka jest przypisana
-        // do numeru
+        numerPiosenki++;
 
-        const piosenka =
-            ustawPiosenke();
+
+        odpowiedzSprawdzona = false;
+
+
+        poleOdpowiedzi.value = "";
+
+        wynikTekst.textContent = "";
 
 
         songNumber.textContent =
-            `Piosenka ${numer} / ${piosenki.length}`;
+            "Piosenka " +
+            numerPiosenki +
+            " / " +
+            piosenki.length;
 
 
-        answer.value = "";
+        // Przywracamy elementy,
+        // gdy przechodzimy do kolejnej rundy.
 
-        result.textContent = "";
+        playButton.style.display = "";
 
-        sprawdzona = false;
+        poleOdpowiedzi.style.display = "";
+
+        submitButton.style.display = "";
+
+        nextButton.style.display = "";
 
 
-        // zapamiętujemy aktualną
-
-        window.aktualnaPiosenka =
-            piosenka;
+        koniecQuizu = false;
     }
 
 
-    // ================================
+    // ==========================================
+    // KONIEC QUIZU
+    // ==========================================
+
+    function zakonczQuiz() {
+
+        koniecQuizu = true;
+
+        zatrzymajAudio();
+
+
+        songNumber.textContent =
+            "KONIEC QUIZU";
+
+
+        wynikTekst.textContent =
+            "🏁 KONIEC QUIZU!";
+
+
+        playButton.style.display = "none";
+
+        poleOdpowiedzi.style.display = "none";
+
+        submitButton.style.display = "none";
+
+        nextButton.style.display = "none";
+    }
+
+
+    // ==========================================
     // WYBÓR CZASU
-    // ================================
+    // ==========================================
 
-    czasButtons.forEach(button => {
+    przyciskiCzasu.forEach(przycisk => {
 
-        button.addEventListener(
+        przycisk.addEventListener(
             "click",
             () => {
 
-                if (koniec) return;
+                if (koniecQuizu) {
+                    return;
+                }
 
-                czas =
+
+                wybranyCzas =
                     Number(
-                        button.dataset.time
+                        przycisk.dataset.time
                     );
 
 
-                czasButtons.forEach(b => {
-                    b.classList.remove("active");
+                przyciskiCzasu.forEach(p => {
+
+                    p.classList.remove(
+                        "active"
+                    );
+
                 });
 
 
-                button.classList.add("active");
+                przycisk.classList.add(
+                    "active"
+                );
 
 
                 zatrzymajAudio();
@@ -250,39 +303,47 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
-    // ================================
-    // ODTWARZANIE
-    // ================================
+    // ==========================================
+    // ODTWARZANIE FRAGMENTU
+    //
+    // ZAWSZE OD 0:00
+    // ==========================================
 
     playButton.addEventListener(
         "click",
         async () => {
 
-            if (koniec) return;
+            if (koniecQuizu) {
+                return;
+            }
 
 
-            const piosenka =
-                window.aktualnaPiosenka;
+            const aktualnaPiosenka =
+                pobierzAktualnaPiosenke();
 
 
-            if (!piosenka) return;
+            if (!aktualnaPiosenka) {
+                return;
+            }
 
 
             zatrzymajAudio();
 
 
-            // Ustawiamy plik
-
             audio.src =
-                piosenka.plik;
+                aktualnaPiosenka.plik;
 
-            audio.load();
+
+            audio.preload = "auto";
 
 
             try {
 
-                // Czekamy aż przeglądarka
-                // rozpozna długość MP3
+                audio.load();
+
+
+                // Czekamy na załadowanie
+                // informacji o MP3.
 
                 await new Promise(
                     (resolve, reject) => {
@@ -297,24 +358,49 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
 
 
-                        const loaded = () => {
+                        const timeout =
+                            setTimeout(
+                                () => {
+
+                                    cleanup();
+
+                                    reject(
+                                        new Error(
+                                            "Przekroczono czas ładowania audio."
+                                        )
+                                    );
+
+                                },
+                                15000
+                            );
+
+
+                        function loaded() {
+
+                            clearTimeout(
+                                timeout
+                            );
 
                             cleanup();
 
                             resolve();
-                        };
+                        }
 
 
-                        const error = () => {
+                        function error() {
+
+                            clearTimeout(
+                                timeout
+                            );
 
                             cleanup();
 
                             reject(
                                 new Error(
-                                    "Nie można załadować MP3."
+                                    "Błąd ładowania MP3."
                                 )
                             );
-                        };
+                        }
 
 
                         function cleanup() {
@@ -347,43 +433,56 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 // ==================================
-                // ZAWSZE POCZĄTEK PIOSENKI
+                // ZAWSZE POCZĄTEK
                 // ==================================
 
                 audio.currentTime = 0;
 
 
-                // Odtwarzanie
+                // ==================================
+                // ODTWARZANIE
+                // ==================================
 
                 await audio.play();
 
 
-                // Zatrzymanie po wybranym czasie
+                // ==================================
+                // STOP PO 1 / 5 / 10 SEKUNDACH
+                // ==================================
 
-                timer =
+                timerOdtwarzania =
                     setTimeout(
                         () => {
 
                             audio.pause();
 
-                            audio.currentTime = 0;
+                            try {
 
-                            timer = null;
+                                audio.currentTime = 0;
+
+                            } catch (error) {
+
+                                // Nic
+                            }
+
+
+                            timerOdtwarzania =
+                                null;
 
                         },
-                        czas * 1000
+                        wybranyCzas * 1000
                     );
 
 
             } catch (error) {
 
                 console.error(
-                    "Błąd audio:",
+                    "Błąd odtwarzania:",
                     error
                 );
 
 
-                result.textContent =
+                wynikTekst.textContent =
                     "⚠️ Nie udało się odtworzyć muzyki.";
             }
 
@@ -391,78 +490,87 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-    // ================================
+    // ==========================================
     // SPRAWDZANIE ODPOWIEDZI
-    // ================================
+    // ==========================================
 
     function sprawdzOdpowiedz() {
 
-        if (koniec) return;
+        if (koniecQuizu) {
+            return;
+        }
 
 
-        if (sprawdzona) {
+        const aktualnaPiosenka =
+            pobierzAktualnaPiosenke();
 
-            result.textContent =
+
+        if (!aktualnaPiosenka) {
+            return;
+        }
+
+
+        if (odpowiedzSprawdzona) {
+
+            wynikTekst.textContent =
                 "Najpierw kliknij „Kolejna piosenka”.";
 
             return;
         }
 
 
-        const piosenka =
-            window.aktualnaPiosenka;
-
-
-        if (!piosenka) return;
-
-
         const odpowiedz =
-            answer.value
+            poleOdpowiedzi.value
                 .trim()
                 .toLowerCase();
 
 
         if (odpowiedz === "") {
 
-            result.textContent =
-                "Wpisz tytuł piosenki!";
+            wynikTekst.textContent =
+                "Wpisz tytuł piosenki.";
 
             return;
         }
 
 
-        const poprawna =
-            piosenka.tytul
+        const poprawnaOdpowiedz =
+            aktualnaPiosenka.tytul
                 .trim()
                 .toLowerCase();
 
 
-        if (odpowiedz === poprawna) {
+        if (
+            odpowiedz ===
+            poprawnaOdpowiedz
+        ) {
 
             wynik++;
 
-            result.textContent =
+            wynikTekst.textContent =
                 "🎉 DOBRZE! +1 punkt";
+
 
         } else {
 
-            result.textContent =
+            wynikTekst.textContent =
                 "❌ ŹLE! Poprawna odpowiedź: " +
-                piosenka.tytul;
+                aktualnaPiosenka.tytul;
         }
 
 
         score.textContent =
-            "Poprawne odpowiedzi: " + wynik;
+            "Poprawne odpowiedzi: " +
+            wynik;
 
 
-        sprawdzona = true;
+        odpowiedzSprawdzona = true;
     }
 
 
-    // ================================
+    // ==========================================
     // PRZYCISK SPRAWDŹ
-    // ================================
+    // ==========================================
 
     submitButton.addEventListener(
         "click",
@@ -470,15 +578,18 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-    // ================================
-    // ENTER
-    // ================================
+    // ==========================================
+    // ENTER = SPRAWDŹ
+    // ==========================================
 
-    answer.addEventListener(
+    poleOdpowiedzi.addEventListener(
         "keydown",
         event => {
 
-            if (event.key === "Enter") {
+            if (
+                event.key === "Enter" &&
+                !koniecQuizu
+            ) {
 
                 event.preventDefault();
 
@@ -489,24 +600,27 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-    // ================================
+    // ==========================================
     // KOLEJNA PIOSENKA
-    // ================================
+    // ==========================================
 
     nextButton.addEventListener(
         "click",
         () => {
 
-            if (koniec) return;
+            if (koniecQuizu) {
+                return;
+            }
 
-            nowaPiosenka();
+
+            rozpocznijNastepnaPiosenke();
         }
     );
 
 
-    // ================================
+    // ==========================================
     // WRÓĆ
-    // ================================
+    // ==========================================
 
     previousButton.addEventListener(
         "click",
@@ -514,25 +628,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
             zatrzymajAudio();
 
-            result.textContent = "";
+            poleOdpowiedzi.value = "";
 
-            answer.value = "";
+            wynikTekst.textContent = "";
 
-            sprawdzona = false;
+            odpowiedzSprawdzona = false;
         }
     );
 
 
-    // ================================
+    // ==========================================
     // START
-    // ================================
+    // ==========================================
 
-    nowaPiosenka();
+    rozpocznijNastepnaPiosenke();
 
 
     console.log(
-        "PAKTO QUIZ działa. Piosenek:",
-        piosenki.length
+        "PAKTO QUIZ uruchomiony poprawnie."
     );
 
 });
