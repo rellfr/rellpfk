@@ -12,92 +12,133 @@
 
 <body>
 
-<main class="quiz-container">
+    <main class="quiz-container">
 
-    <h1>PAKTO QUIZ</h1>
+        <h1>PAKTO QUIZ</h1>
 
-    <section class="time-section">
+        <!-- WYBÓR CZASU -->
 
-        <h3>Wybierz długość fragmentu:</h3>
+        <section class="time-section">
 
-        <div class="time-buttons">
+            <h3>Wybierz długość fragmentu:</h3>
 
-            <button class="time-button" data-time="1">
-                1 sekunda
+            <div class="time-buttons">
+
+                <button
+                    class="time-button"
+                    data-time="1"
+                >
+                    1 sekunda
+                </button>
+
+                <button
+                    class="time-button active"
+                    data-time="5"
+                >
+                    5 sekund
+                </button>
+
+                <button
+                    class="time-button"
+                    data-time="10"
+                >
+                    10 sekund
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- QUIZ -->
+
+        <section id="quiz">
+
+            <p id="songNumber">
+                Piosenka 1 / 16
+            </p>
+
+            <h2 id="question">
+                Jaki jest tytuł piosenki?
+            </h2>
+
+
+            <!-- AUDIO -->
+
+            <audio
+                id="audio"
+                preload="auto"
+            ></audio>
+
+
+            <button
+                id="playButton"
+                class="main-button"
+                type="button"
+            >
+                ▶ ODTWÓRZ FRAGMENT
             </button>
 
-            <button class="time-button active" data-time="5">
-                5 sekund
+
+            <!-- ODPOWIEDŹ -->
+
+            <input
+                type="text"
+                id="answer"
+                placeholder="Wpisz tytuł piosenki..."
+                autocomplete="off"
+                spellcheck="false"
+            >
+
+
+            <button
+                id="submitAnswer"
+                class="main-button"
+                type="button"
+            >
+                SPRAWDŹ ODPOWIEDŹ
             </button>
 
-            <button class="time-button" data-time="10">
-                10 sekund
-            </button>
 
-        </div>
+            <!-- WYNIK ODPOWIEDZI -->
 
-    </section>
+            <p id="result"></p>
 
 
-    <section id="quiz">
+            <!-- NAWIGACJA -->
 
-        <p id="songNumber">
-            Piosenka 1 / 16
-        </p>
+            <div class="navigation">
 
-        <h2 id="question">
-            Jaki jest tytuł piosenki?
-        </h2>
+                <button
+                    id="previousButton"
+                    type="button"
+                >
+                    ◀ WRÓĆ
+                </button>
 
+                <button
+                    id="nextButton"
+                    type="button"
+                >
+                    KOLEJNA PIOSENKA ▶
+                </button>
 
-        <audio id="audio" preload="auto"></audio>
-
-
-        <button id="playButton" class="main-button">
-            ▶ ODTWÓRZ FRAGMENT
-        </button>
-
-
-        <input
-            type="text"
-            id="answer"
-            placeholder="Wpisz tytuł piosenki..."
-            autocomplete="off"
-            spellcheck="false"
-        >
+            </div>
 
 
-        <button id="submitAnswer" class="main-button">
-            SPRAWDŹ ODPOWIEDŹ
-        </button>
+            <!-- PUNKTY -->
+
+            <p id="score">
+                Poprawne odpowiedzi: 0
+            </p>
+
+        </section>
+
+    </main>
 
 
-        <p id="result"></p>
-
-
-        <div class="navigation">
-
-            <button id="previousButton">
-                ◀ WRÓĆ
-            </button>
-
-            <button id="nextButton">
-                KOLEJNA PIOSENKA ▶
-            </button>
-
-        </div>
-
-
-        <p id="score">
-            Poprawne odpowiedzi: 0
-        </p>
-
-    </section>
-
-</main>
-
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
 
 </body>
+
 </html>
