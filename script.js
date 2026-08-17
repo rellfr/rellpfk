@@ -1,597 +1,433 @@
-// =====================================================
-// PIOSENKI
-// =====================================================
+let wybranyCzas = 0;
+let aktualnaPiosenka = null;
+let wynik = 0;
+let odpowiedzSprawdzona = false;
+let timerOdtwarzania = null;
 
-const songs = [
+const piosenki = [
     {
-        title: "Aż Strach Pomyśleć",
-        file: "https://imagetourl.cloud/t3di974n.mp3"
+        plik: "https://imagetourl.cloud/ljpik97i.mp3",
+        tytul: "Aż Strach Pomyśleć"
     },
-
     {
-        title: "Chwile Ulotne",
-        file: "https://imagetourl.cloud/176t682b.mp3"
+        plik: "https://imagetourl.cloud/xdfujtna.mp3",
+        tytul: "Chwile Ulotne"
     },
-
     {
-        title: "Ja to Ja",
-        file: "https://imagetourl.cloud/rql850fr.mp3"
+        plik: "https://imagetourl.cloud/1qmsx1py.mp3",
+        tytul: "Ja to Ja"
     },
-
     {
-        title: "Jestem Bogiem",
-        file: "https://imagetourl.cloud/niwdd05m.mp3"
+        plik: "https://imagetourl.cloud/7tdpxo8c.mp3",
+        tytul: "Jestem Bogiem"
     },
-
     {
-        title: "Nowiny",
-        file: "https://imagetourl.cloud/c6f8n0ai.mp3"
+        plik: "https://imagetourl.cloud/amc0kizs.mp3",
+        tytul: "Nowiny"
     },
-
     {
-        title: "Priorytety",
-        file: "https://imagetourl.cloud/wag1card.mp3"
+        plik: "https://imagetourl.cloud/zuxb7m4p.mp3",
+        tytul: "Priorytety"
     },
-
     {
-        title: "Rób Co Chcesz",
-        file: "https://imagetourl.cloud/eu5884u4.mp3"
+        plik: "https://imagetourl.cloud/kv8qoc1o.mp3",
+        tytul: "Rób Co Chcesz"
     },
-
     {
-        title: "Play + Rec",
-        file: "https://imagetourl.cloud/0m7nxjof.mp3"
+        plik: "https://imagetourl.cloud/dckspyi1.mp3",
+        tytul: "Play + Rec"
     },
-
     {
-        title: "C.D. Kinematografii",
-        file: "https://imagetourl.cloud/98qzhtf5.mp3"
+        plik: "https://imagetourl.cloud/uk4uz7ky.mp3",
+        tytul: "C.D. Kinematografii"
     },
-
     {
-        title: "Dla Pewnego Swego",
-        file: "https://imagetourl.cloud/wb7q17k9.mp3"
+        plik: "https://imagetourl.cloud/uh6pnkgr.mp3",
+        tytul: "Dla Pewnego Swego"
     },
-
     {
-        title: "Mechaniczna Pomarańcza",
-        file: "https://imagetourl.cloud/kvemmtg1.mp3"
+        plik: "https://imagetourl.cloud/9kf76yxi.mp3",
+        tytul: "Mechaniczna Pomarańcza"
+    },
+    {
+        plik: "https://imagetourl.cloud/v69kvgtq.mp3",
+        tytul: "'Le Się Zmahauem"
+    },
+    {
+        plik: "https://imagetourl.cloud/iala857t.mp3",
+        tytul: "Tak Jak Telewizor (Kipper Remix)"
+    },
+    {
+        plik: "https://imagetourl.cloud/mq6jz5zy.mp3",
+        tytul: "Na Mocy Paktu"
+    },
+    {
+        plik: "https://imagetourl.cloud/kggwsu0n.mp3",
+        tytul: "Ja To Ja 2 (Dokładnie Tak!)"
     }
 ];
 
-
-// =====================================================
-// ZMIENNE
-// =====================================================
-
-let playlist = [];
-
-let currentPosition = 0;
-
-let score = 0;
-
-let selectedTime = 5;
-
-let stopTimer = null;
-
-let answered = false;
+const audio = document.getElementById("audio-player");
+const przyciskiCzasu = document.querySelectorAll(".time-button");
+const startButton = document.getElementById("start-button");
+const startScreen = document.querySelector(".start-screen");
+const gameScreen = document.querySelector(".game-screen");
+const poleOdpowiedzi = document.getElementById("answer");
+const przyciskZgaduj = document.getElementById("guess-button");
+const wynikTekst = document.getElementById("result");
+const wynikPunkty = document.getElementById("score");
+const nextButton = document.getElementById("next-button");
+const backButton = document.getElementById("back-button");
 
 
-// =====================================================
-// ELEMENTY HTML
-// =====================================================
+// ================================
+// WYBÓR CZASU
+// ================================
 
-const audio =
-    document.getElementById("audio");
+przyciskiCzasu.forEach(przycisk => {
+    przycisk.addEventListener("click", () => {
 
-const playButton =
-    document.getElementById("playButton");
+        przyciskiCzasu.forEach(p => {
+            p.classList.remove("selected");
+        });
 
-const answerInput =
-    document.getElementById("answer");
+        przycisk.classList.add("selected");
 
-const submitButton =
-    document.getElementById("submitAnswer");
-
-const nextButton =
-    document.getElementById("nextButton");
-
-const previousButton =
-    document.getElementById("previousButton");
-
-const result =
-    document.getElementById("result");
-
-const scoreText =
-    document.getElementById("score");
-
-const question =
-    document.getElementById("question");
-
-const songNumber =
-    document.getElementById("songNumber");
+        wybranyCzas = Number(przycisk.dataset.time);
+    });
+});
 
 
-// =====================================================
-// LOSOWANIE
-// =====================================================
+// ================================
+// ZATRZYMANIE AUDIO
+// ================================
 
-function shuffle(array) {
+function zatrzymajAudio() {
 
-    const newArray = [...array];
-
-    for (
-        let i = newArray.length - 1;
-        i > 0;
-        i--
-    ) {
-
-        const random =
-            Math.floor(
-                Math.random() * (i + 1)
-            );
-
-        [
-            newArray[i],
-            newArray[random]
-        ] = [
-            newArray[random],
-            newArray[i]
-        ];
+    if (timerOdtwarzania !== null) {
+        clearTimeout(timerOdtwarzania);
+        timerOdtwarzania = null;
     }
-
-    return newArray;
-}
-
-
-// =====================================================
-// NORMALIZOWANIE ODPOWIEDZI
-// =====================================================
-
-function normalizeAnswer(text) {
-
-    return text
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^a-z0-9]/g, "");
-}
-
-
-// =====================================================
-// AKTUALNA PIOSENKA
-// =====================================================
-
-function getCurrentSong() {
-
-    return playlist[currentPosition];
-
-}
-
-
-// =====================================================
-// NOWA RUNDA
-// =====================================================
-
-function createNewRound() {
-
-    playlist = shuffle(songs);
-
-    currentPosition = 0;
-
-    score = 0;
-
-    loadSong();
-
-}
-
-
-// =====================================================
-// ŁADOWANIE PIOSENKI
-// =====================================================
-
-function loadSong() {
-
-    clearTimeout(stopTimer);
 
     audio.pause();
 
-    const song = getCurrentSong();
+    audio.onloadedmetadata = null;
+    audio.oncanplay = null;
 
-
-    songNumber.textContent =
-        `Piosenka ${currentPosition + 1} z ${playlist.length}`;
-
-
-    question.textContent =
-        "Jaki jest tytuł piosenki?";
-
-
-    answerInput.value = "";
-
-    result.textContent = "";
-
-    answered = false;
-
-
-    // Ustawienie adresu MP3
-
-    audio.src = song.file;
-
-    audio.load();
-
-
-    playButton.textContent =
-        "▶ ODTWÓRZ FRAGMENT";
-
-
-    previousButton.disabled =
-        currentPosition === 0;
-
-
-    nextButton.disabled = false;
-
-
-    updateScore();
-
-
-    answerInput.focus();
-
+    try {
+        audio.currentTime = 0;
+    } catch (error) {
+        // Nic
+    }
 }
 
 
-// =====================================================
-// ODTWARZANIE
-// =====================================================
+// ================================
+// LOSOWANIE PIOSENKI
+// ================================
 
-playButton.addEventListener(
-    "click",
-    async function () {
+function wylosujPiosenke() {
 
-        clearTimeout(stopTimer);
+    const numer = Math.floor(
+        Math.random() * piosenki.length
+    );
+
+    aktualnaPiosenka = piosenki[numer];
+}
 
 
-        // Jeśli muzyka aktualnie gra
+// ================================
+// ODTWARZANIE FRAGMENTU
+// ================================
 
-        if (!audio.paused) {
+async function odtworzFragment() {
+
+    if (!aktualnaPiosenka) {
+        return;
+    }
+
+    zatrzymajAudio();
+
+    audio.src = aktualnaPiosenka.plik;
+    audio.preload = "auto";
+    audio.volume = 1;
+
+    try {
+
+        audio.load();
+
+        await new Promise((resolve, reject) => {
+
+            if (audio.readyState >= 1) {
+                resolve();
+                return;
+            }
+
+            const timeout = setTimeout(() => {
+                reject(
+                    new Error("Nie udało się załadować pliku audio.")
+                );
+            }, 15000);
+
+            audio.addEventListener(
+                "loadedmetadata",
+                () => {
+                    clearTimeout(timeout);
+                    resolve();
+                },
+                { once: true }
+            );
+
+            audio.addEventListener(
+                "error",
+                () => {
+                    clearTimeout(timeout);
+                    reject(
+                        new Error("Błąd ładowania pliku audio.")
+                    );
+                },
+                { once: true }
+            );
+        });
+
+
+        // Losujemy miejsce w piosence.
+        // Zostawiamy cały wybrany fragment przed końcem.
+        let maksymalnyStart =
+            audio.duration - wybranyCzas;
+
+        if (
+            !Number.isFinite(maksymalnyStart) ||
+            maksymalnyStart < 0
+        ) {
+            maksymalnyStart = 0;
+        }
+
+        const losowyStart =
+            Math.random() * maksymalnyStart;
+
+        audio.currentTime = losowyStart;
+
+
+        await new Promise((resolve, reject) => {
+
+            if (audio.readyState >= 3) {
+                resolve();
+                return;
+            }
+
+            const timeout = setTimeout(() => {
+                reject(
+                    new Error(
+                        "Audio nie jest gotowe do odtwarzania."
+                    )
+                );
+            }, 15000);
+
+            audio.addEventListener(
+                "canplay",
+                () => {
+                    clearTimeout(timeout);
+                    resolve();
+                },
+                { once: true }
+            );
+
+            audio.addEventListener(
+                "error",
+                () => {
+                    clearTimeout(timeout);
+                    reject(
+                        new Error(
+                            "Błąd podczas przygotowywania audio."
+                        )
+                    );
+                },
+                { once: true }
+            );
+        });
+
+
+        // Dopiero tutaj uruchamiamy muzykę.
+        await audio.play();
+
+
+        // Timer zaczyna się dopiero po rozpoczęciu audio.
+        timerOdtwarzania = setTimeout(() => {
 
             audio.pause();
 
-            playButton.textContent =
-                "▶ ODTWÓRZ FRAGMENT";
+            try {
+                audio.currentTime = 0;
+            } catch (error) {
+                // Nic
+            }
 
+            timerOdtwarzania = null;
+
+        }, wybranyCzas * 1000);
+
+
+    } catch (error) {
+
+        if (error.name === "AbortError") {
             return;
         }
 
-
-        try {
-
-            // Zaczynamy od początku
-
-            audio.currentTime = 0;
-
-
-            await audio.play();
-
-
-            playButton.textContent =
-                "⏸ ODTWARZANIE...";
-
-
-            // Zatrzymanie po wybranym czasie
-
-            stopTimer = setTimeout(
-                function () {
-
-                    audio.pause();
-
-                    playButton.textContent =
-                        "▶ ODTWÓRZ FRAGMENT";
-
-                },
-                selectedTime * 1000
-            );
-
-
-        } catch (error) {
-
-            console.error(
-                "Błąd odtwarzania:",
-                error
-            );
-
-
-            result.textContent =
-                "❌ Nie można odtworzyć muzyki.";
-
-        }
-
-    }
-);
-
-
-// =====================================================
-// KONIEC MP3
-// =====================================================
-
-audio.addEventListener(
-    "ended",
-    function () {
-
-        clearTimeout(stopTimer);
-
-        playButton.textContent =
-            "▶ ODTWÓRZ FRAGMENT";
-
-    }
-);
-
-
-// =====================================================
-// WYBÓR CZASU
-// =====================================================
-
-document
-    .querySelectorAll(".time-button")
-    .forEach(
-        function (button) {
-
-            button.addEventListener(
-                "click",
-                function () {
-
-                    selectedTime =
-                        Number(
-                            this.dataset.time
-                        );
-
-
-                    document
-                        .querySelectorAll(
-                            ".time-button"
-                        )
-                        .forEach(
-                            function (btn) {
-
-                                btn.classList.remove(
-                                    "active"
-                                );
-
-                            }
-                        );
-
-
-                    this.classList.add(
-                        "active"
-                    );
-
-                }
-            );
-
-        }
-    );
-
-
-// =====================================================
-// SPRAWDZANIE ODPOWIEDZI
-// =====================================================
-
-function checkAnswer() {
-
-    // Nie można odpowiadać drugi raz
-
-    if (answered) {
-
-        return;
-
-    }
-
-
-    const userAnswer =
-        normalizeAnswer(
-            answerInput.value
+        console.error(
+            "Błąd odtwarzania:",
+            error
         );
 
-
-    // Pusta odpowiedź
-
-    if (userAnswer === "") {
-
-        result.textContent =
-            "❗ Wpisz odpowiedź.";
-
-        return;
-
+        wynikTekst.textContent =
+            "⚠️ Nie udało się odtworzyć muzyki.";
     }
-
-
-    const correctAnswer =
-        normalizeAnswer(
-            getCurrentSong().title
-        );
-
-
-    // POPRAWNA
-
-    if (
-        userAnswer === correctAnswer
-    ) {
-
-        score++;
-
-        result.textContent =
-            "✅ DOBRZE!";
-
-    }
-
-    // BŁĘDNA
-
-    else {
-
-        result.textContent =
-            "❌ ŹLE! Poprawna odpowiedź: " +
-            getCurrentSong().title;
-
-    }
-
-
-    answered = true;
-
-
-    clearTimeout(stopTimer);
-
-    audio.pause();
-
-
-    playButton.textContent =
-        "▶ ODTWÓRZ FRAGMENT";
-
-
-    updateScore();
-
 }
 
 
-// =====================================================
-// PRZYCISK SPRAWDŹ
-// =====================================================
+// ================================
+// NOWA RUNDA
+// ================================
 
-submitButton.addEventListener(
-    "click",
-    checkAnswer
-);
+function rozpocznijRunde() {
+
+    odpowiedzSprawdzona = false;
+
+    poleOdpowiedzi.value = "";
+    wynikTekst.textContent = "";
+
+    wylosujPiosenke();
+
+    odtworzFragment();
+
+    poleOdpowiedzi.focus();
+}
 
 
-// =====================================================
-// ENTER = SPRAWDŹ
-// =====================================================
+// ================================
+// START
+// ================================
 
-answerInput.addEventListener(
+startButton.addEventListener("click", () => {
+
+    if (wybranyCzas === 0) {
+
+        alert(
+            "Najpierw wybierz 1, 5 albo 10 sekund!"
+        );
+
+        return;
+    }
+
+    startScreen.style.display = "none";
+    gameScreen.style.display = "block";
+
+    rozpocznijRunde();
+});
+
+
+// ================================
+// SPRAWDZANIE ODPOWIEDZI
+// ================================
+
+przyciskZgaduj.addEventListener("click", () => {
+
+    if (!aktualnaPiosenka) {
+        return;
+    }
+
+    if (odpowiedzSprawdzona) {
+
+        wynikTekst.textContent =
+            "Najpierw kliknij „Kolejna piosenka”.";
+
+        return;
+    }
+
+    const odpowiedz =
+        poleOdpowiedzi.value
+            .trim()
+            .toLowerCase();
+
+    if (odpowiedz === "") {
+
+        wynikTekst.textContent =
+            "Wpisz tytuł piosenki!";
+
+        return;
+    }
+
+    const poprawnaOdpowiedz =
+        aktualnaPiosenka.tytul
+            .toLowerCase();
+
+    if (odpowiedz === poprawnaOdpowiedz) {
+
+        wynik++;
+
+        wynikPunkty.textContent = wynik;
+
+        wynikTekst.textContent =
+            "🎉 DOBRZE! +1 punkt";
+
+    } else {
+
+        wynikTekst.textContent =
+            "❌ ŹLE! Poprawna odpowiedź: " +
+            aktualnaPiosenka.tytul;
+    }
+
+    odpowiedzSprawdzona = true;
+});
+
+
+// ================================
+// ENTER = ZGADUJ
+// ================================
+
+poleOdpowiedzi.addEventListener(
     "keydown",
-    function (event) {
+    event => {
 
         if (event.key === "Enter") {
-
-            checkAnswer();
-
+            przyciskZgaduj.click();
         }
 
     }
 );
 
 
-// =====================================================
+// ================================
 // KOLEJNA PIOSENKA
-// =====================================================
+// ================================
 
-nextButton.addEventListener(
-    "click",
-    function () {
+nextButton.addEventListener("click", () => {
 
-        clearTimeout(stopTimer);
-
-
-        // Czy to ostatnia?
-
-        if (
-            currentPosition >=
-            playlist.length - 1
-        ) {
-
-            finishQuiz();
-
-            return;
-
-        }
-
-
-        currentPosition++;
-
-        loadSong();
-
+    if (wybranyCzas === 0) {
+        return;
     }
-);
+
+    rozpocznijRunde();
+});
 
 
-// =====================================================
-// WRÓĆ
-// =====================================================
+// ================================
+// COFNIJ
+// ================================
 
-previousButton.addEventListener(
-    "click",
-    function () {
+backButton.addEventListener("click", () => {
 
-        if (currentPosition <= 0) {
+    zatrzymajAudio();
 
-            return;
+    audio.removeAttribute("src");
+    audio.load();
 
-        }
+    aktualnaPiosenka = null;
+    odpowiedzSprawdzona = false;
 
+    poleOdpowiedzi.value = "";
+    wynikTekst.textContent = "";
 
-        currentPosition--;
-
-        loadSong();
-
-    }
-);
-
-
-// =====================================================
-// WYNIK
-// =====================================================
-
-function updateScore() {
-
-    scoreText.textContent =
-        `Poprawne odpowiedzi: ${score}`;
-
-}
-
-
-// =====================================================
-// KONIEC QUIZU
-// =====================================================
-
-function finishQuiz() {
-
-    clearTimeout(stopTimer);
-
-    audio.pause();
-
-
-    document.getElementById(
-        "quiz"
-    ).innerHTML = `
-
-        <h2>
-            KONIEC! 🎉
-        </h2>
-
-        <p>
-            Przeszedłeś wszystkie 11 piosenek.
-        </p>
-
-        <h2>
-            Poprawne odpowiedzi: ${score}
-        </h2>
-
-        <button
-            onclick="location.reload()"
-        >
-            🔀 NOWA LOSOWA RUNDA
-        </button>
-
-    `;
-
-}
-
-
-// =====================================================
-// START
-// =====================================================
-
-// Pierwsza runda również jest losowa.
-
-playlist = shuffle(songs);
-
-loadSong();
+    gameScreen.style.display = "none";
+    startScreen.style.display = "block";
+});
