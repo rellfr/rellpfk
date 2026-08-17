@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="pl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Pakto Quiz</title>
+
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -14,26 +17,46 @@
     <h1>PAKTO QUIZ</h1>
 
     <section class="time-section">
+
         <h3>Wybierz długość fragmentu:</h3>
 
         <div class="time-buttons">
-            <button class="time-button" data-time="1">1 sekunda</button>
-            <button class="time-button active" data-time="5">5 sekund</button>
-            <button class="time-button" data-time="10">10 sekund</button>
+
+            <button class="time-button" data-time="1">
+                1 sekunda
+            </button>
+
+            <button class="time-button active" data-time="5">
+                5 sekund
+            </button>
+
+            <button class="time-button" data-time="10">
+                10 sekund
+            </button>
+
         </div>
+
     </section>
+
 
     <section id="quiz">
 
-        <p id="songNumber">Piosenka 1</p>
+        <p id="songNumber">
+            Piosenka 1 / 16
+        </p>
 
-        <h2 id="question">Jaki jest tytuł piosenki?</h2>
+        <h2 id="question">
+            Jaki jest tytuł piosenki?
+        </h2>
+
 
         <audio id="audio" preload="auto"></audio>
+
 
         <button id="playButton" class="main-button">
             ▶ ODTWÓRZ FRAGMENT
         </button>
+
 
         <input
             type="text"
@@ -43,22 +66,36 @@
             spellcheck="false"
         >
 
+
         <button id="submitAnswer" class="main-button">
             SPRAWDŹ ODPOWIEDŹ
         </button>
 
+
         <p id="result"></p>
 
+
         <div class="navigation">
-            <button id="previousButton">◀ WRÓĆ</button>
-            <button id="nextButton">KOLEJNA PIOSENKA ▶</button>
+
+            <button id="previousButton">
+                ◀ WRÓĆ
+            </button>
+
+            <button id="nextButton">
+                KOLEJNA PIOSENKA ▶
+            </button>
+
         </div>
 
-        <p id="score">Poprawne odpowiedzi: 0</p>
+
+        <p id="score">
+            Poprawne odpowiedzi: 0
+        </p>
 
     </section>
 
 </main>
+
 
 <script src="script.js"></script>
 
