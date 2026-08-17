@@ -71,351 +71,554 @@ const piosenki = [
     }
 ];
 
-const audio = document.getElementById("audio-player");
-const przyciskiCzasu = document.querySelectorAll(".time-button");
-const startButton = document.getElementById("start-button");
-const startScreen = document.querySelector(".start-screen");
-const gameScreen = document.querySelector(".game-screen");
-const poleOdpowiedzi = document.getElementById("answer");
-const przyciskZgaduj = document.getElementById("guess-button");
-const wynikTekst = document.getElementById("result");
-const wynikPunkty = document.getElementById("score");
-const nextButton = document.getElementById("next-button");
-const backButton = document.getElementById("back-button");
+
+// ======================================================
+// CZEKAMY, AŻ HTML BĘDZIE GOTOWY
+// ======================================================
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    // ==================================================
+    // ELEMENTY HTML
+    // ==================================================
+
+    const audio = document.getElementById("audio-player");
+    const przyciskiCzasu = document.querySelectorAll(".time-button");
+    const startButton = document.getElementById("start-button");
+    const startScreen = document.querySelector(".start-screen");
+    const gameScreen = document.querySelector(".game-screen");
+    const poleOdpowiedzi = document.getElementById("answer");
+    const przyciskZgaduj = document.getElementById("guess-button");
+    const wynikTekst = document.getElementById("result");
+    const wynikPunkty = document.getElementById("score");
+    const nextButton = document.getElementById("next-button");
+    const backButton = document.getElementById("back-button");
 
 
-// ================================
-// WYBÓR CZASU
-// ================================
+    // ==================================================
+    // SPRAWDZENIE HTML
+    // ==================================================
 
-przyciskiCzasu.forEach(przycisk => {
-    przycisk.addEventListener("click", () => {
+    const brakujaceElementy = [];
 
-        przyciskiCzasu.forEach(p => {
-            p.classList.remove("selected");
-        });
+    if (!audio) brakujaceElementy.push("#audio-player");
+    if (!startButton) brakujaceElementy.push("#start-button");
+    if (!startScreen) brakujaceElementy.push(".start-screen");
+    if (!gameScreen) brakujaceElementy.push(".game-screen");
+    if (!poleOdpowiedzi) brakujaceElementy.push("#answer");
+    if (!przyciskZgaduj) brakujaceElementy.push("#guess-button");
+    if (!wynikTekst) brakujaceElementy.push("#result");
+    if (!wynikPunkty) brakujaceElementy.push("#score");
+    if (!nextButton) brakujaceElementy.push("#next-button");
+    if (!backButton) brakujaceElementy.push("#back-button");
 
-        przycisk.classList.add("selected");
-        wybranyCzas = Number(przycisk.dataset.time);
-    });
-});
+    if (brakujaceElementy.length > 0) {
 
-
-// ================================
-// ZATRZYMANIE AUDIO
-// ================================
-
-function zatrzymajAudio() {
-
-    if (timerOdtwarzania !== null) {
-        clearTimeout(timerOdtwarzania);
-        timerOdtwarzania = null;
-    }
-
-    audio.pause();
-
-    audio.onloadedmetadata = null;
-    audio.oncanplay = null;
-
-    try {
-        audio.currentTime = 0;
-    } catch (error) {
-        // Nic
-    }
-}
-
-
-// ================================
-// LOSOWANIE
-// ================================
-
-function wylosujPiosenke() {
-
-    const numer = Math.floor(
-        Math.random() * piosenki.length
-    );
-
-    aktualnaPiosenka = piosenki[numer];
-}
-
-
-// ================================
-// ODTWARZANIE
-// ================================
-
-async function odtworzFragment() {
-
-    if (!aktualnaPiosenka) {
-        return;
-    }
-
-    zatrzymajAudio();
-
-    audio.src = aktualnaPiosenka.plik;
-    audio.preload = "auto";
-    audio.volume = 1;
-
-    try {
-
-        audio.load();
-
-        await new Promise((resolve, reject) => {
-
-            if (audio.readyState >= 1) {
-                resolve();
-                return;
-            }
-
-            const timeout = setTimeout(() => {
-                reject(
-                    new Error("Nie udało się załadować pliku audio.")
-                );
-            }, 15000);
-
-            audio.addEventListener(
-                "loadedmetadata",
-                () => {
-                    clearTimeout(timeout);
-                    resolve();
-                },
-                { once: true }
-            );
-
-            audio.addEventListener(
-                "error",
-                () => {
-                    clearTimeout(timeout);
-                    reject(
-                        new Error("Błąd ładowania pliku audio.")
-                    );
-                },
-                { once: true }
-            );
-
-        });
-
-        let maksymalnyStart =
-            audio.duration - wybranyCzas;
-
-        if (
-            !Number.isFinite(maksymalnyStart) ||
-            maksymalnyStart < 0
-        ) {
-            maksymalnyStart = 0;
-        }
-
-        const losowyStart =
-            Math.random() * maksymalnyStart;
-
-        audio.currentTime = losowyStart;
-
-        await new Promise((resolve, reject) => {
-
-            if (audio.readyState >= 3) {
-                resolve();
-                return;
-            }
-
-            const timeout = setTimeout(() => {
-                reject(
-                    new Error("Audio nie jest gotowe do odtwarzania.")
-                );
-            }, 15000);
-
-            audio.addEventListener(
-                "canplay",
-                () => {
-                    clearTimeout(timeout);
-                    resolve();
-                },
-                { once: true }
-            );
-
-            audio.addEventListener(
-                "error",
-                () => {
-                    clearTimeout(timeout);
-                    reject(
-                        new Error("Błąd przygotowywania audio.")
-                    );
-                },
-                { once: true }
-            );
-
-        });
-
-        await audio.play();
-
-        timerOdtwarzania = setTimeout(() => {
-
-            audio.pause();
-
-            try {
-                audio.currentTime = 0;
-            } catch (error) {
-                // Nic
-            }
-
-            timerOdtwarzania = null;
-
-        }, wybranyCzas * 1000);
-
-    } catch (error) {
-
-        if (error.name === "AbortError") {
-            return;
-        }
-
-        console.error("Błąd odtwarzania:", error);
-
-        wynikTekst.textContent =
-            "⚠️ Nie udało się odtworzyć muzyki.";
-    }
-}
-
-
-// ================================
-// NOWA RUNDA
-// ================================
-
-function rozpocznijRunde() {
-
-    odpowiedzSprawdzona = false;
-
-    poleOdpowiedzi.value = "";
-    wynikTekst.textContent = "";
-
-    wylosujPiosenke();
-    odtworzFragment();
-
-    poleOdpowiedzi.focus();
-}
-
-
-// ================================
-// START
-// ================================
-
-startButton.addEventListener("click", () => {
-
-    if (wybranyCzas === 0) {
-
-        alert(
-            "Najpierw wybierz 1, 5 albo 10 sekund!"
+        console.error(
+            "Brakujące elementy HTML:",
+            brakujaceElementy.join(", ")
         );
 
         return;
     }
 
-    startScreen.style.display = "none";
-    gameScreen.style.display = "block";
 
-    rozpocznijRunde();
-});
+    // ==================================================
+    // WYBÓR CZASU
+    // ==================================================
 
+    przyciskiCzasu.forEach(przycisk => {
 
-// ================================
-// ZGADYWANIE
-// ================================
+        przycisk.addEventListener("click", () => {
 
-przyciskZgaduj.addEventListener("click", () => {
+            przyciskiCzasu.forEach(p => {
+                p.classList.remove("selected");
+            });
 
-    if (!aktualnaPiosenka) {
-        return;
-    }
+            przycisk.classList.add("selected");
 
-    if (odpowiedzSprawdzona) {
+            wybranyCzas = Number(
+                przycisk.dataset.time
+            );
 
-        wynikTekst.textContent =
-            "Najpierw kliknij „Kolejna piosenka”.";
+        });
 
-        return;
-    }
-
-    const odpowiedz =
-        poleOdpowiedzi.value
-            .trim()
-            .toLowerCase();
-
-    if (odpowiedz === "") {
-
-        wynikTekst.textContent =
-            "Wpisz tytuł piosenki!";
-
-        return;
-    }
-
-    const poprawnaOdpowiedz =
-        aktualnaPiosenka.tytul
-            .toLowerCase();
-
-    if (odpowiedz === poprawnaOdpowiedz) {
-
-        wynik++;
-
-        wynikPunkty.textContent = wynik;
-
-        wynikTekst.textContent =
-            "🎉 DOBRZE! +1 punkt";
-
-    } else {
-
-        wynikTekst.textContent =
-            "❌ ŹLE! Poprawna odpowiedź: " +
-            aktualnaPiosenka.tytul;
-    }
-
-    odpowiedzSprawdzona = true;
-});
+    });
 
 
-// ================================
-// ENTER = ZGADUJ
-// ================================
+    // ==================================================
+    // ZATRZYMANIE AUDIO
+    // ==================================================
 
-poleOdpowiedzi.addEventListener(
-    "keydown",
-    event => {
+    function zatrzymajAudio() {
 
-        if (event.key === "Enter") {
-            przyciskZgaduj.click();
+        if (timerOdtwarzania !== null) {
+
+            clearTimeout(timerOdtwarzania);
+
+            timerOdtwarzania = null;
+        }
+
+        audio.pause();
+
+        audio.onloadedmetadata = null;
+        audio.oncanplay = null;
+
+        try {
+
+            audio.currentTime = 0;
+
+        } catch (error) {
+
+            // Nic
+
         }
 
     }
-);
 
 
-// ================================
-// KOLEJNA PIOSENKA
-// ================================
+    // ==================================================
+    // LOSOWANIE PIOSENKI
+    // ==================================================
 
-nextButton.addEventListener("click", () => {
+    function wylosujPiosenke() {
 
-    if (wybranyCzas === 0) {
-        return;
+        const numer = Math.floor(
+            Math.random() * piosenki.length
+        );
+
+        aktualnaPiosenka = piosenki[numer];
+
     }
 
-    rozpocznijRunde();
-});
+
+    // ==================================================
+    // ODTWARZANIE FRAGMENTU
+    // ==================================================
+
+    async function odtworzFragment() {
+
+        if (!aktualnaPiosenka) {
+            return;
+        }
+
+        zatrzymajAudio();
+
+        audio.src = aktualnaPiosenka.plik;
+        audio.preload = "auto";
+        audio.volume = 1;
+
+        try {
+
+            audio.load();
 
 
-// ================================
-// COFNIJ
-// ================================
+            // ------------------------------------------
+            // CZEKAJ NA METADANE
+            // ------------------------------------------
 
-backButton.addEventListener("click", () => {
+            await new Promise((resolve, reject) => {
 
-    zatrzymajAudio();
+                if (audio.readyState >= 1) {
 
-    audio.removeAttribute("src");
-    audio.load();
+                    resolve();
+                    return;
 
-    aktualnaPiosenka = null;
-    odpowiedzSprawdzona = false;
+                }
 
-    poleOdpowiedzi.value = "";
-    wynikTekst.textContent = "";
+                let zakonczone = false;
 
-    gameScreen.style.display = "none";
-    startScreen.style.display = "block";
+                const timeout = setTimeout(() => {
+
+                    if (zakonczone) return;
+
+                    zakonczone = true;
+
+                    reject(
+                        new Error(
+                            "Nie udało się załadować pliku audio."
+                        )
+                    );
+
+                }, 15000);
+
+
+                const metadata = () => {
+
+                    if (zakonczone) return;
+
+                    zakonczone = true;
+
+                    clearTimeout(timeout);
+
+                    resolve();
+
+                };
+
+
+                const blad = () => {
+
+                    if (zakonczone) return;
+
+                    zakonczone = true;
+
+                    clearTimeout(timeout);
+
+                    reject(
+                        new Error(
+                            "Błąd ładowania pliku audio."
+                        )
+                    );
+
+                };
+
+
+                audio.addEventListener(
+                    "loadedmetadata",
+                    metadata,
+                    { once: true }
+                );
+
+                audio.addEventListener(
+                    "error",
+                    blad,
+                    { once: true }
+                );
+
+            });
+
+
+            // ------------------------------------------
+            // LOSOWY POCZĄTEK PIOSENKI
+            // ------------------------------------------
+
+            let maksymalnyStart =
+                audio.duration - wybranyCzas;
+
+
+            if (
+                !Number.isFinite(maksymalnyStart) ||
+                maksymalnyStart < 0
+            ) {
+
+                maksymalnyStart = 0;
+
+            }
+
+
+            const losowyStart =
+                Math.random() * maksymalnyStart;
+
+
+            audio.currentTime = losowyStart;
+
+
+            // ------------------------------------------
+            // CZEKAJ AŻ AUDIO BĘDZIE GOTOWE
+            // ------------------------------------------
+
+            await new Promise((resolve, reject) => {
+
+                if (audio.readyState >= 3) {
+
+                    resolve();
+                    return;
+
+                }
+
+                let zakonczone = false;
+
+                const timeout = setTimeout(() => {
+
+                    if (zakonczone) return;
+
+                    zakonczone = true;
+
+                    reject(
+                        new Error(
+                            "Audio nie jest gotowe do odtwarzania."
+                        )
+                    );
+
+                }, 15000);
+
+
+                const gotowe = () => {
+
+                    if (zakonczone) return;
+
+                    zakonczone = true;
+
+                    clearTimeout(timeout);
+
+                    resolve();
+
+                };
+
+
+                const blad = () => {
+
+                    if (zakonczone) return;
+
+                    zakonczone = true;
+
+                    clearTimeout(timeout);
+
+                    reject(
+                        new Error(
+                            "Błąd przygotowywania audio."
+                        )
+                    );
+
+                };
+
+
+                audio.addEventListener(
+                    "canplay",
+                    gotowe,
+                    { once: true }
+                );
+
+                audio.addEventListener(
+                    "error",
+                    blad,
+                    { once: true }
+                );
+
+            });
+
+
+            // ------------------------------------------
+            // ODTWARZANIE
+            // ------------------------------------------
+
+            await audio.play();
+
+
+            // ------------------------------------------
+            // ZATRZYMAJ PO WYBRANYM CZASIE
+            // ------------------------------------------
+
+            timerOdtwarzania = setTimeout(() => {
+
+                audio.pause();
+
+                try {
+
+                    audio.currentTime = 0;
+
+                } catch (error) {
+
+                    // Nic
+
+                }
+
+                timerOdtwarzania = null;
+
+            }, wybranyCzas * 1000);
+
+
+        } catch (error) {
+
+            if (error.name === "AbortError") {
+                return;
+            }
+
+            console.error(
+                "Błąd odtwarzania:",
+                error
+            );
+
+            wynikTekst.textContent =
+                "⚠️ Nie udało się odtworzyć muzyki.";
+
+        }
+
+    }
+
+
+    // ==================================================
+    // NOWA RUNDA
+    // ==================================================
+
+    function rozpocznijRunde() {
+
+        odpowiedzSprawdzona = false;
+
+        poleOdpowiedzi.value = "";
+
+        wynikTekst.textContent = "";
+
+        wylosujPiosenke();
+
+        odtworzFragment();
+
+        poleOdpowiedzi.focus();
+
+    }
+
+
+    // ==================================================
+    // START GRY
+    // ==================================================
+
+    startButton.addEventListener("click", () => {
+
+        if (wybranyCzas === 0) {
+
+            alert(
+                "Najpierw wybierz 1, 5 albo 10 sekund!"
+            );
+
+            return;
+        }
+
+
+        startScreen.style.display = "none";
+
+        gameScreen.style.display = "block";
+
+
+        rozpocznijRunde();
+
+    });
+
+
+    // ==================================================
+    // ZGADYWANIE
+    // ==================================================
+
+    przyciskZgaduj.addEventListener("click", () => {
+
+        if (!aktualnaPiosenka) {
+            return;
+        }
+
+
+        if (odpowiedzSprawdzona) {
+
+            wynikTekst.textContent =
+                "Najpierw kliknij „Kolejna piosenka”.";
+
+            return;
+
+        }
+
+
+        const odpowiedz =
+            poleOdpowiedzi.value
+                .trim()
+                .toLowerCase();
+
+
+        if (odpowiedz === "") {
+
+            wynikTekst.textContent =
+                "Wpisz tytuł piosenki!";
+
+            return;
+
+        }
+
+
+        const poprawnaOdpowiedz =
+            aktualnaPiosenka.tytul
+                .toLowerCase();
+
+
+        if (odpowiedz === poprawnaOdpowiedz) {
+
+            wynik++;
+
+            wynikPunkty.textContent = wynik;
+
+            wynikTekst.textContent =
+                "🎉 DOBRZE! +1 punkt";
+
+        } else {
+
+            wynikTekst.textContent =
+                "❌ ŹLE! Poprawna odpowiedź: " +
+                aktualnaPiosenka.tytul;
+
+        }
+
+
+        odpowiedzSprawdzona = true;
+
+    });
+
+
+    // ==================================================
+    // ENTER = ZGADUJ
+    // ==================================================
+
+    poleOdpowiedzi.addEventListener(
+        "keydown",
+        event => {
+
+            if (event.key === "Enter") {
+
+                event.preventDefault();
+
+                przyciskZgaduj.click();
+
+            }
+
+        }
+    );
+
+
+    // ==================================================
+    // KOLEJNA PIOSENKA
+    // ==================================================
+
+    nextButton.addEventListener("click", () => {
+
+        if (wybranyCzas === 0) {
+            return;
+        }
+
+        rozpocznijRunde();
+
+    });
+
+
+    // ==================================================
+    // COFNIJ
+    // ==================================================
+
+    backButton.addEventListener("click", () => {
+
+        zatrzymajAudio();
+
+
+        audio.removeAttribute("src");
+
+        audio.load();
+
+
+        aktualnaPiosenka = null;
+
+        odpowiedzSprawdzona = false;
+
+
+        poleOdpowiedzi.value = "";
+
+        wynikTekst.textContent = "";
+
+
+        gameScreen.style.display = "none";
+
+        startScreen.style.display = "block";
+
+    });
+
+
+    // ==================================================
+    // GOTOWE
+    // ==================================================
+
+    console.log("Pakto Quiz został uruchomiony poprawnie.");
+
 });
