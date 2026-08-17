@@ -1,427 +1,179 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
 
-    let wybranyCzas = 5;
-    let aktualnaPiosenka = null;
+    let czas = 5;
+    let piosenka = null;
     let wynik = 0;
-    let odpowiedzSprawdzona = false;
-    let numerPiosenki = 0;
+    let sprawdzona = false;
+    let numer = 0;
     let timer = null;
 
     const piosenki = [
-        {
-            plik: "https://imagetourl.cloud/ljpik97i.mp3",
-            tytul: "Aż Strach Pomyśleć"
-        },
-        {
-            plik: "https://imagetourl.cloud/xdfujtna.mp3",
-            tytul: "Chwile Ulotne"
-        },
-        {
-            plik: "https://imagetourl.cloud/1qmsx1py.mp3",
-            tytul: "Ja to Ja"
-        },
-        {
-            plik: "https://imagetourl.cloud/7tdpxo8c.mp3",
-            tytul: "Jestem Bogiem"
-        },
-        {
-            plik: "https://imagetourl.cloud/amc0kizs.mp3",
-            tytul: "Nowiny"
-        },
-        {
-            plik: "https://imagetourl.cloud/zuxb7m4p.mp3",
-            tytul: "Priorytety"
-        },
-        {
-            plik: "https://imagetourl.cloud/kv8qoc1o.mp3",
-            tytul: "Rób Co Chcesz"
-        },
-        {
-            plik: "https://imagetourl.cloud/dckspyi1.mp3",
-            tytul: "Play + Rec"
-        },
-        {
-            plik: "https://imagetourl.cloud/uk4uz7ky.mp3",
-            tytul: "C.D. Kinematografii"
-        },
-        {
-            plik: "https://imagetourl.cloud/uh6pnkgr.mp3",
-            tytul: "Dla Pewnego Swego"
-        },
-        {
-            plik: "https://imagetourl.cloud/9kf76yxi.mp3",
-            tytul: "Mechaniczna Pomarańcza"
-        },
-        {
-            plik: "https://imagetourl.cloud/v69kvgtq.mp3",
-            tytul: "'Le Się Zmahauem"
-        },
-        {
-            plik: "https://imagetourl.cloud/iala857t.mp3",
-            tytul: "Tak Jak Telewizor (Kipper Remix)"
-        },
-        {
-            plik: "https://imagetourl.cloud/mq6jz5zy.mp3",
-            tytul: "Na Mocy Paktu"
-        },
-        {
-            plik: "https://imagetourl.cloud/kggwsu0n.mp3",
-            tytul: "Ja To Ja 2 (Dokładnie Tak!)"
-        },
-        {
-            plik: "https://imagetourl.cloud/pug5vxd1.mp3",
-            tytul: "Wielkie Dzięki"
-        }
+        ["https://imagetourl.cloud/ljpik97i.mp3", "Aż Strach Pomyśleć"],
+        ["https://imagetourl.cloud/xdfujtna.mp3", "Chwile Ulotne"],
+        ["https://imagetourl.cloud/1qmsx1py.mp3", "Ja to Ja"],
+        ["https://imagetourl.cloud/7tdpxo8c.mp3", "Jestem Bogiem"],
+        ["https://imagetourl.cloud/amc0kizs.mp3", "Nowiny"],
+        ["https://imagetourl.cloud/zuxb7m4p.mp3", "Priorytety"],
+        ["https://imagetourl.cloud/kv8qoc1o.mp3", "Rób Co Chcesz"],
+        ["https://imagetourl.cloud/dckspyi1.mp3", "Play + Rec"],
+        ["https://imagetourl.cloud/uk4uz7ky.mp3", "C.D. Kinematografii"],
+        ["https://imagetourl.cloud/uh6pnkgr.mp3", "Dla Pewnego Swego"],
+        ["https://imagetourl.cloud/9kf76yxi.mp3", "Mechaniczna Pomarańcza"],
+        ["https://imagetourl.cloud/v69kvgtq.mp3", "'Le Się Zmahauem"],
+        ["https://imagetourl.cloud/iala857t.mp3", "Tak Jak Telewizor (Kipper Remix)"],
+        ["https://imagetourl.cloud/mq6jz5zy.mp3", "Na Mocy Paktu"],
+        ["https://imagetourl.cloud/kggwsu0n.mp3", "Ja To Ja 2 (Dokładnie Tak!)"],
+        ["https://imagetourl.cloud/pug5vxd1.mp3", "Wielkie Dzięki"]
     ];
 
-
-    // ELEMENTY STRONY
-
     const audio = document.getElementById("audio");
-    const przyciskiCzasu = document.querySelectorAll(".time-button");
-
-    const playButton = document.getElementById("playButton");
+    const czasButtons = document.querySelectorAll(".time-button");
+    const play = document.getElementById("playButton");
     const answer = document.getElementById("answer");
-    const submitAnswer = document.getElementById("submitAnswer");
-
+    const submit = document.getElementById("submitAnswer");
     const result = document.getElementById("result");
-
-    const nextButton = document.getElementById("nextButton");
-    const previousButton = document.getElementById("previousButton");
-
+    const next = document.getElementById("nextButton");
+    const previous = document.getElementById("previousButton");
     const songNumber = document.getElementById("songNumber");
     const score = document.getElementById("score");
 
-
-    // SPRAWDZENIE ELEMENTÓW
-
-    if (
-        !audio ||
-        !playButton ||
-        !answer ||
-        !submitAnswer ||
-        !result ||
-        !nextButton ||
-        !previousButton ||
-        !songNumber ||
-        !score
-    ) {
-        console.error("Błąd: brakuje elementu HTML.");
-        return;
+    function stop() {
+        if (timer) clearTimeout(timer);
+        timer = null;
+        audio.pause();
+        audio.currentTime = 0;
     }
 
+    function nowaPiosenka() {
+        stop();
 
-    // WYBÓR CZASU
+        numer++;
 
-    przyciskiCzasu.forEach(function (button) {
+        if (numer > 16) numer = 1;
 
-        button.addEventListener("click", function () {
+        piosenka =
+            piosenki[Math.floor(Math.random() * piosenki.length)];
 
-            przyciskiCzasu.forEach(function (b) {
-                b.classList.remove("active");
-            });
+        songNumber.textContent = "Piosenka " + numer;
+        answer.value = "";
+        result.textContent = "";
+        sprawdzona = false;
+    }
+
+    czasButtons.forEach(button => {
+        button.addEventListener("click", () => {
+
+            czas = Number(button.dataset.time);
+
+            czasButtons.forEach(b =>
+                b.classList.remove("active")
+            );
 
             button.classList.add("active");
 
-            wybranyCzas = Number(button.dataset.time);
-
-            zatrzymajAudio();
+            stop();
         });
-
     });
 
+    play.addEventListener("click", async () => {
 
-    // ZATRZYMANIE AUDIO
+        if (!piosenka) nowaPiosenka();
 
-    function zatrzymajAudio() {
+        stop();
 
-        if (timer !== null) {
-            clearTimeout(timer);
-            timer = null;
-        }
-
-        audio.pause();
-
-        try {
-            audio.currentTime = 0;
-        } catch (e) {
-            // nic
-        }
-    }
-
-
-    // LOSOWANIE PIOSENKI
-
-    function losujPiosenke() {
-
-        const index = Math.floor(
-            Math.random() * piosenki.length
-        );
-
-        aktualnaPiosenka = piosenki[index];
-    }
-
-
-    // NOWA RUNDA
-
-    function nowaPiosenka() {
-
-        zatrzymajAudio();
-
-        losujPiosenke();
-
-        odpowiedzSprawdzona = false;
-
-        answer.value = "";
-
-        result.textContent = "";
-
-        numerPiosenki++;
-
-        songNumber.textContent =
-            "Piosenka " + numerPiosenki;
-    }
-
-
-    // ODTWARZANIE
-
-    async function odtworzFragment() {
-
-        if (!aktualnaPiosenka) {
-            nowaPiosenka();
-        }
-
-        zatrzymajAudio();
-
-        audio.src = aktualnaPiosenka.plik;
-
+        audio.src = piosenka[0];
         audio.load();
 
         try {
 
-            await new Promise(function (resolve, reject) {
+            await new Promise((resolve, reject) => {
 
                 if (audio.readyState >= 1) {
                     resolve();
                     return;
                 }
 
-                function loaded() {
-                    cleanup();
-                    resolve();
-                }
-
-                function error() {
-                    cleanup();
-                    reject(new Error("Nie można załadować MP3."));
-                }
-
-                function cleanup() {
-                    audio.removeEventListener(
-                        "loadedmetadata",
-                        loaded
-                    );
-
-                    audio.removeEventListener(
-                        "error",
-                        error
-                    );
-                }
-
-                audio.addEventListener(
-                    "loadedmetadata",
-                    loaded
-                );
-
-                audio.addEventListener(
-                    "error",
-                    error
-                );
-
+                audio.onloadedmetadata = resolve;
+                audio.onerror = reject;
             });
 
-
-            let maxStart =
-                audio.duration - wybranyCzas;
-
-            if (
-                !Number.isFinite(maxStart) ||
-                maxStart < 0
-            ) {
-                maxStart = 0;
-            }
-
+            const max =
+                Math.max(0, audio.duration - czas);
 
             audio.currentTime =
-                Math.random() * maxStart;
-
+                Math.random() * max;
 
             await audio.play();
 
-
-            timer = setTimeout(function () {
-
+            timer = setTimeout(() => {
                 audio.pause();
+                audio.currentTime = 0;
+            }, czas * 1000);
 
-                try {
-                    audio.currentTime = 0;
-                } catch (e) {
-                    // nic
-                }
+        } catch (e) {
 
-                timer = null;
-
-            }, wybranyCzas * 1000);
-
-
-        } catch (error) {
-
-            if (error.name === "AbortError") {
-                return;
-            }
-
-            console.error(
-                "Błąd odtwarzania:",
-                error
-            );
+            console.error("Błąd audio:", e);
 
             result.textContent =
                 "⚠️ Nie udało się odtworzyć muzyki.";
         }
+    });
+
+    function sprawdzOdpowiedz() {
+
+        if (!piosenka || sprawdzona) return;
+
+        const wpisana =
+            answer.value.trim().toLowerCase();
+
+        if (!wpisana) {
+            result.textContent = "Wpisz tytuł piosenki!";
+            return;
+        }
+
+        const poprawna =
+            piosenka[1].toLowerCase();
+
+        if (wpisana === poprawna) {
+
+            wynik++;
+
+            result.textContent =
+                "🎉 DOBRZE! +1 punkt";
+
+        } else {
+
+            result.textContent =
+                "❌ ŹLE! Poprawna odpowiedź: " +
+                piosenka[1];
+        }
+
+        score.textContent =
+            "Poprawne odpowiedzi: " + wynik;
+
+        sprawdzona = true;
     }
 
+    submit.addEventListener("click", sprawdzOdpowiedz);
 
-    // PRZYCISK ODTWÓRZ
-
-    playButton.addEventListener(
-        "click",
-        function () {
-
-            odtworzFragment();
-
+    answer.addEventListener("keydown", e => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            sprawdzOdpowiedz();
         }
-    );
+    });
 
+    next.addEventListener("click", nowaPiosenka);
 
-    // SPRAWDZANIE ODPOWIEDZI
-
-    submitAnswer.addEventListener(
-        "click",
-        function () {
-
-            if (!aktualnaPiosenka) {
-                return;
-            }
-
-            if (odpowiedzSprawdzona) {
-
-                result.textContent =
-                    "Najpierw kliknij „Kolejna piosenka”.";
-
-                return;
-            }
-
-
-            const wpisana =
-                answer.value
-                    .trim()
-                    .toLowerCase();
-
-
-            if (wpisana === "") {
-
-                result.textContent =
-                    "Wpisz tytuł piosenki!";
-
-                return;
-            }
-
-
-            const poprawna =
-                aktualnaPiosenka.tytul
-                    .trim()
-                    .toLowerCase();
-
-
-            if (wpisana === poprawna) {
-
-                wynik++;
-
-                result.textContent =
-                    "🎉 DOBRZE! +1 punkt";
-
-            } else {
-
-                result.textContent =
-                    "❌ ŹLE! Poprawna odpowiedź: " +
-                    aktualnaPiosenka.tytul;
-            }
-
-
-            score.textContent =
-                "Poprawne odpowiedzi: " + wynik;
-
-
-            odpowiedzSprawdzona = true;
-
-        }
-    );
-
-
-    // ENTER = SPRAWDŹ
-
-    answer.addEventListener(
-        "keydown",
-        function (event) {
-
-            if (event.key === "Enter") {
-
-                event.preventDefault();
-
-                submitAnswer.click();
-            }
-
-        }
-    );
-
-
-    // KOLEJNA PIOSENKA
-
-    nextButton.addEventListener(
-        "click",
-        function () {
-
-            nowaPiosenka();
-
-        }
-    );
-
-
-    // WRÓĆ
-
-    previousButton.addEventListener(
-        "click",
-        function () {
-
-            zatrzymajAudio();
-
-            aktualnaPiosenka = null;
-
-            odpowiedzSprawdzona = false;
-
-            answer.value = "";
-
-            result.textContent = "";
-
-        }
-    );
-
-
-    // PIERWSZA PIOSENKA
+    previous.addEventListener("click", () => {
+        stop();
+        piosenka = null;
+        answer.value = "";
+        result.textContent = "";
+        sprawdzona = false;
+    });
 
     nowaPiosenka();
 
-
-    console.log("PAKTO QUIZ działa poprawnie.");
-
+    console.log("PAKTO QUIZ działa.");
 });
