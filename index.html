@@ -1,95 +1,66 @@
 <!DOCTYPE html>
 <html lang="pl">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Pakto Quiz</title>
-
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <main class="quiz-container">
+<main class="quiz-container">
 
-        <h1>PAKTO QUIZ</h1>
+    <h1>PAKTO QUIZ</h1>
 
-        <section class="time-section">
+    <section class="time-section">
+        <h3>Wybierz długość fragmentu:</h3>
 
-            <h3>Wybierz długość fragmentu:</h3>
+        <div class="time-buttons">
+            <button class="time-button" data-time="1">1 sekunda</button>
+            <button class="time-button active" data-time="5">5 sekund</button>
+            <button class="time-button" data-time="10">10 sekund</button>
+        </div>
+    </section>
 
-            <div class="time-buttons">
+    <section id="quiz">
 
-                <button class="time-button" data-time="1">
-                    1 sekunda
-                </button>
+        <p id="songNumber">Piosenka 1</p>
 
-                <button class="time-button active" data-time="5">
-                    5 sekund
-                </button>
+        <h2 id="question">Jaki jest tytuł piosenki?</h2>
 
-                <button class="time-button" data-time="10">
-                    10 sekund
-                </button>
+        <audio id="audio" preload="auto"></audio>
 
-            </div>
+        <button id="playButton" class="main-button">
+            ▶ ODTWÓRZ FRAGMENT
+        </button>
 
-        </section>
+        <input
+            type="text"
+            id="answer"
+            placeholder="Wpisz tytuł piosenki..."
+            autocomplete="off"
+            spellcheck="false"
+        >
 
-        <section id="quiz">
+        <button id="submitAnswer" class="main-button">
+            SPRAWDŹ ODPOWIEDŹ
+        </button>
 
-            <p id="songNumber">
-                Piosenka 1
-            </p>
+        <p id="result"></p>
 
-            <h2 id="question">
-                Jaki jest tytuł piosenki?
-            </h2>
+        <div class="navigation">
+            <button id="previousButton">◀ WRÓĆ</button>
+            <button id="nextButton">KOLEJNA PIOSENKA ▶</button>
+        </div>
 
-            <audio id="audio" preload="auto"></audio>
+        <p id="score">Poprawne odpowiedzi: 0</p>
 
-            <button id="playButton" class="main-button">
-                ▶ ODTWÓRZ FRAGMENT
-            </button>
+    </section>
 
-            <input
-                type="text"
-                id="answer"
-                placeholder="Wpisz tytuł piosenki..."
-                autocomplete="off"
-                spellcheck="false"
-            >
+</main>
 
-            <button id="submitAnswer" class="main-button">
-                SPRAWDŹ ODPOWIEDŹ
-            </button>
-
-            <p id="result"></p>
-
-            <div class="navigation">
-
-                <button id="previousButton">
-                    ◀ WRÓĆ
-                </button>
-
-                <button id="nextButton">
-                    KOLEJNA PIOSENKA ▶
-                </button>
-
-            </div>
-
-            <p id="score">
-                Poprawne odpowiedzi: 0
-            </p>
-
-        </section>
-
-    </main>
-
-    <script src="script.js"></script>
+<script src="script.js"></script>
 
 </body>
-
 </html>
