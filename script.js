@@ -64,6 +64,10 @@ const piosenki = [
     {
         plik: "https://imagetourl.cloud/kggwsu0n.mp3",
         tytul: "Ja To Ja 2 (Dokładnie Tak!)"
+    },
+    {
+        plik: "https://imagetourl.cloud/pug5vxd1.mp3",
+        tytul: "Wielkie Dzięki"
     }
 ];
 
@@ -92,7 +96,6 @@ przyciskiCzasu.forEach(przycisk => {
         });
 
         przycisk.classList.add("selected");
-
         wybranyCzas = Number(przycisk.dataset.time);
     });
 });
@@ -123,7 +126,7 @@ function zatrzymajAudio() {
 
 
 // ================================
-// LOSOWANIE PIOSENKI
+// LOSOWANIE
 // ================================
 
 function wylosujPiosenke() {
@@ -137,7 +140,7 @@ function wylosujPiosenke() {
 
 
 // ================================
-// ODTWARZANIE FRAGMENTU
+// ODTWARZANIE
 // ================================
 
 async function odtworzFragment() {
@@ -188,11 +191,9 @@ async function odtworzFragment() {
                 },
                 { once: true }
             );
+
         });
 
-
-        // Losujemy miejsce w piosence.
-        // Zostawiamy cały wybrany fragment przed końcem.
         let maksymalnyStart =
             audio.duration - wybranyCzas;
 
@@ -208,7 +209,6 @@ async function odtworzFragment() {
 
         audio.currentTime = losowyStart;
 
-
         await new Promise((resolve, reject) => {
 
             if (audio.readyState >= 3) {
@@ -218,9 +218,7 @@ async function odtworzFragment() {
 
             const timeout = setTimeout(() => {
                 reject(
-                    new Error(
-                        "Audio nie jest gotowe do odtwarzania."
-                    )
+                    new Error("Audio nie jest gotowe do odtwarzania.")
                 );
             }, 15000);
 
@@ -238,21 +236,16 @@ async function odtworzFragment() {
                 () => {
                     clearTimeout(timeout);
                     reject(
-                        new Error(
-                            "Błąd podczas przygotowywania audio."
-                        )
+                        new Error("Błąd przygotowywania audio.")
                     );
                 },
                 { once: true }
             );
+
         });
 
-
-        // Dopiero tutaj uruchamiamy muzykę.
         await audio.play();
 
-
-        // Timer zaczyna się dopiero po rozpoczęciu audio.
         timerOdtwarzania = setTimeout(() => {
 
             audio.pause();
@@ -267,17 +260,13 @@ async function odtworzFragment() {
 
         }, wybranyCzas * 1000);
 
-
     } catch (error) {
 
         if (error.name === "AbortError") {
             return;
         }
 
-        console.error(
-            "Błąd odtwarzania:",
-            error
-        );
+        console.error("Błąd odtwarzania:", error);
 
         wynikTekst.textContent =
             "⚠️ Nie udało się odtworzyć muzyki.";
@@ -297,7 +286,6 @@ function rozpocznijRunde() {
     wynikTekst.textContent = "";
 
     wylosujPiosenke();
-
     odtworzFragment();
 
     poleOdpowiedzi.focus();
@@ -327,7 +315,7 @@ startButton.addEventListener("click", () => {
 
 
 // ================================
-// SPRAWDZANIE ODPOWIEDZI
+// ZGADYWANIE
 // ================================
 
 przyciskZgaduj.addEventListener("click", () => {
